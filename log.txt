@@ -1,0 +1,39 @@
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL linux_read_sorted_physical_devices:
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL      Original order:
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL            [0] AMD Radeon RX 6700 XT (RADV NAVI22)
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL      Sorted order:
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL            [0] AMD Radeon RX 6700 XT (RADV NAVI22)  
+Mon Aug 19 02:45:07 2024 VULKAN [VERBOSE] GENERAL Copying old device 0 into new device 0
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL linux_read_sorted_physical_devices:
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL      Original order:
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL            [0] AMD Radeon RX 6700 XT (RADV NAVI22)
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL      Sorted order:
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL            [0] AMD Radeon RX 6700 XT (RADV NAVI22)  
+Mon Aug 19 02:45:07 2024 VULKAN [VERBOSE] GENERAL Copying old device 0 into new device 0
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL linux_read_sorted_physical_devices:
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL      Original order:
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL            [0] AMD Radeon RX 6700 XT (RADV NAVI22)
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL      Sorted order:
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL            [0] AMD Radeon RX 6700 XT (RADV NAVI22)  
+Mon Aug 19 02:45:07 2024 VULKAN [VERBOSE] GENERAL Copying old device 0 into new device 0
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL linux_read_sorted_physical_devices:
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL      Original order:
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL            [0] AMD Radeon RX 6700 XT (RADV NAVI22)
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL      Sorted order:
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL            [0] AMD Radeon RX 6700 XT (RADV NAVI22)  
+Mon Aug 19 02:45:07 2024 VULKAN [VERBOSE] GENERAL Copying old device 0 into new device 0
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL Inserted device layer "VK_LAYER_KHRONOS_validation" (libVkLayer_khronos_validation.so)
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL Failed to find vkGetDeviceProcAddr in layer "libVkLayer_MESA_device_select.so"
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL vkCreateDevice layer callstack setup to:
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL    <Application>
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL      ||
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL    <Loader>
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL      ||
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL    VK_LAYER_KHRONOS_validation
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL            Type: Explicit
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL            Manifest: /opt/vulkan_sdk/1.3.290.0/x86_64/share/vulkan/explicit_layer.d/VkLayer_khronos_validation.json
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL            Library:  libVkLayer_khronos_validation.so
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL      ||
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL    <Device>
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] GENERAL        Using "AMD Radeon RX 6700 XT (RADV NAVI22)" with driver: "/usr/lib64/libvulkan_radeon.so"
+Mon Aug 19 02:45:07 2024 VULKAN [INFO] VALIDATION Validation Information: [ WARNING-cache-file-error ] | MessageID = 0xb8515d13 | vkCreateDevice():  Cannot open shader validation cache at /home/kgaft/.cache/shader_validation_cache-1000.bin for reading (it may not exist yet)

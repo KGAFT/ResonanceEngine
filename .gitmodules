@@ -1,0 +1,9 @@
+[submodule "modules/VulkanLib"]
+	path = modules/VulkanLib
+	url = https://github.com/KGAFT/VulkanLib
+[submodule "modules/sdl"]
+	path = modules/sdl
+	url = https://github.com/libsdl-org/SDL
+[submodule "modules/assimp"]
+	path = modules/assimp
+	url = https://github.com/assimp/assimp
