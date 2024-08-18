@@ -54,7 +54,7 @@ replay_pid*
 *.pch
 
 # Compiled Dynamic libraries
-*.so
+*.so*
 *.dylib
 *.dll
 
