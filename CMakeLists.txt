@@ -9,8 +9,6 @@ file(GLOB_RECURSE LIN_SHARED_LIBS NativeModules/bin/*.so )
 file(GLOB_RECURSE WIN_SHARED_LIBS NativeModules/bin/*.dll )
 file(GLOB_RECURSE WIN_STATIC_LIBS NativeModules/lib/*.lib )
 
-
-
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/JavaModules)
 
 add_subdirectory(modules/VulkanLib)
