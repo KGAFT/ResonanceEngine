@@ -1,26 +1,12 @@
 #include "Utils/JniString.hpp"
 #include "Window/Window.hxx"
 #include "com_kgaft_ResonanceEngine_Native_Window.h"
-
-#define GetWindow(windowObject)                                                \
-  ((Window *)env->GetLongField(                                                \
-      windowObject, env->GetFieldID(env->GetObjectClass(windowObject),         \
-                                    "windowHandle", "J")))
+#include <map>
+#include "JavaWindow.h"
 
 
-class JResizeCallback : public IWindowResizeCallback{
-public:
-  JResizeCallback(JNIEnv* env, jobject callback) : env(env), callbackObject(callback), callbackId(env->GetMethodID(env->GetObjectClass(callback), "resized", "(I,I)V")){
-  }
-private:
-  jmethodID callbackId;
-  jobject callbackObject;
-  JNIEnv* env;  
-public:
-  void resized(uint32_t width, uint32_t height) override {
-    env->CallVoidMethodA(jobject obj, jmethodID methodID, const jvalue *args)
-  }
-};
+std::map<jobject, JResizeCallback *> resizeCallbacks;
+
 JNIEXPORT jlong JNICALL
 Java_com_kgaft_ResonanceEngine_Native_Window_createWindow(JNIEnv *env, jclass,
                                                           jint width,
@@ -74,27 +60,25 @@ JNIEXPORT void JNICALL Java_com_kgaft_ResonanceEngine_Native_Window_setTitle(
 JNIEXPORT void JNICALL
 Java_com_kgaft_ResonanceEngine_Native_Window_addResizeCallback(
     JNIEnv *env, jobject windowObject, jobject resizeCallback) {
-      env.GetMet
-    }
+  auto resizeCB = new JResizeCallback(env, resizeCallback);
+  resizeCallbacks[resizeCallback] = resizeCB;
+  GetWindow(windowObject)->addResizeCallback(resizeCB);
+}
 
-/*
- * Class:     com_kgaft_ResonanceEngine_Native_Window
- * Method:    removeResizeCallback
- * Signature: (Lcom/kgaft/ResonanceEngine/Native/IWindowResizeCallback;)V
- */
 JNIEXPORT void JNICALL
-Java_com_kgaft_ResonanceEngine_Native_Window_removeResizeCallback(JNIEnv *,
-                                                                  jobject,
-                                                                  jobject);
+Java_com_kgaft_ResonanceEngine_Native_Window_removeResizeCallback(
+    JNIEnv *env, jobject windowObject, jobject resizeCallback) {
+  auto cb = resizeCallbacks[resizeCallback];
+  GetWindow(windowObject)->removeResizeCallback(cb);
+  resizeCallbacks.erase(resizeCallback);
+}
 
-/*
- * Class:     com_kgaft_ResonanceEngine_Native_Window
- * Method:    enableRefreshRateInfo
- * Signature: ()V
- */
 JNIEXPORT void JNICALL
-Java_com_kgaft_ResonanceEngine_Native_Window_enableRefreshRateInfo(JNIEnv *,
-                                                                   jobject);
+Java_com_kgaft_ResonanceEngine_Native_Window_enableRefreshRateInfo(
+    JNIEnv *env, jobject windowObject) {
+
+  GetWindow(windowObject)->enableRefreshRateInfo();
+}
 
 /*
  * Class:     com_kgaft_ResonanceEngine_Native_Window
@@ -102,8 +86,10 @@ Java_com_kgaft_ResonanceEngine_Native_Window_enableRefreshRateInfo(JNIEnv *,
  * Signature: ()V
  */
 JNIEXPORT void JNICALL
-Java_com_kgaft_ResonanceEngine_Native_Window_disableRefreshRateInfo(JNIEnv *,
-                                                                    jobject);
+Java_com_kgaft_ResonanceEngine_Native_Window_disableRefreshRateInfo(
+    JNIEnv *env, jobject windowObject) {
+  GetWindow(windowObject)->disableRefreshInfo();
+}
 
 /*
  * Class:     com_kgaft_ResonanceEngine_Native_Window
@@ -111,4 +97,6 @@ Java_com_kgaft_ResonanceEngine_Native_Window_disableRefreshRateInfo(JNIEnv *,
  * Signature: ()V
  */
 JNIEXPORT void JNICALL
-Java_com_kgaft_ResonanceEngine_Native_Window_destroy(JNIEnv *, jobject);
+Java_com_kgaft_ResonanceEngine_Native_Window_destroy(JNIEnv *env, jobject windowObject){
+  GetWindow(windowObject)->destroy();
+}
