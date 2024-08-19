@@ -15,6 +15,102 @@ extern "C" {
 JNIEXPORT jlong JNICALL Java_com_kgaft_ResonanceEngine_Native_Window_createWindow
   (JNIEnv *, jclass, jint, jint, jstring);
 
+/*
+ * Class:     com_kgaft_ResonanceEngine_Native_Window
+ * Method:    needToClose
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_kgaft_ResonanceEngine_Native_Window_needToClose
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_kgaft_ResonanceEngine_Native_Window
+ * Method:    preRenderEvents
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_com_kgaft_ResonanceEngine_Native_Window_preRenderEvents
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_kgaft_ResonanceEngine_Native_Window
+ * Method:    postRenderEvents
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_com_kgaft_ResonanceEngine_Native_Window_postRenderEvents
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_kgaft_ResonanceEngine_Native_Window
+ * Method:    getWidth
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_com_kgaft_ResonanceEngine_Native_Window_getWidth
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_kgaft_ResonanceEngine_Native_Window
+ * Method:    getHeight
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_com_kgaft_ResonanceEngine_Native_Window_getHeight
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_kgaft_ResonanceEngine_Native_Window
+ * Method:    setSize
+ * Signature: (II)V
+ */
+JNIEXPORT void JNICALL Java_com_kgaft_ResonanceEngine_Native_Window_setSize
+  (JNIEnv *, jobject, jint, jint);
+
+/*
+ * Class:     com_kgaft_ResonanceEngine_Native_Window
+ * Method:    setTitle
+ * Signature: (Ljava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_com_kgaft_ResonanceEngine_Native_Window_setTitle
+  (JNIEnv *, jobject, jstring);
+
+/*
+ * Class:     com_kgaft_ResonanceEngine_Native_Window
+ * Method:    addResizeCallback
+ * Signature: (Lcom/kgaft/ResonanceEngine/Native/IWindowResizeCallback;)V
+ */
+JNIEXPORT void JNICALL Java_com_kgaft_ResonanceEngine_Native_Window_addResizeCallback
+  (JNIEnv *, jobject, jobject);
+
+/*
+ * Class:     com_kgaft_ResonanceEngine_Native_Window
+ * Method:    removeResizeCallback
+ * Signature: (Lcom/kgaft/ResonanceEngine/Native/IWindowResizeCallback;)V
+ */
+JNIEXPORT void JNICALL Java_com_kgaft_ResonanceEngine_Native_Window_removeResizeCallback
+  (JNIEnv *, jobject, jobject);
+
+/*
+ * Class:     com_kgaft_ResonanceEngine_Native_Window
+ * Method:    enableRefreshRateInfo
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_com_kgaft_ResonanceEngine_Native_Window_enableRefreshRateInfo
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_kgaft_ResonanceEngine_Native_Window
+ * Method:    disableRefreshRateInfo
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_com_kgaft_ResonanceEngine_Native_Window_disableRefreshRateInfo
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_kgaft_ResonanceEngine_Native_Window
+ * Method:    destroy
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_com_kgaft_ResonanceEngine_Native_Window_destroy
+  (JNIEnv *, jobject);
+
 #ifdef __cplusplus
 }
 #endif
