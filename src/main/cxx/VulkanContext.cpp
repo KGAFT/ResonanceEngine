@@ -9,6 +9,7 @@
 #include <com_kgaft_ResonanceEngine_Native_VulkanContext_VulkanContext.h>
 #include <map>
 #include <memory>
+#include <jni/jni.hpp>
 
 std::shared_ptr<Instance> instance;
 std::map<std::shared_ptr<PhysicalDevice>,
@@ -23,9 +24,12 @@ void toDeviceBuilder(JNIEnv *env, jobject jbuilder, DeviceBuilder *pOutput) {
       jbuilder, env->GetFieldID(objectClass, "requirePresentSupport", "Z"));
   pOutput->requestGraphicsSupport();
   if (requirePresentSupport) {
-    jobject windowObject = env->GetObjectField(
-        jbuilder, env->GetFieldID(objectClass, "requiredWindowToPresent",
-                                  "Lcom/kgaft/ResonanceEngine/Native/Window"));
+    auto fieldId = env->GetFieldID(objectClass, "requiredWindowToPresent",
+                                   "Lcom/kgaft/ResonanceEngine/Native/Window;");
+
+    jobject windowObject = env->GetObjectField(jbuilder, fieldId);
+    std::cout<<windowObject<<std::endl;
+    jclass windowClass = env->FindClass("com/kgaft/ResonanceEngine/Native/Window");
     auto window = GetWindow(windowObject);
     pOutput->requestPresentSupport(
         window->getWindowSurface(instance->getInstance()));
@@ -33,6 +37,7 @@ void toDeviceBuilder(JNIEnv *env, jobject jbuilder, DeviceBuilder *pOutput) {
   if (requireRayTracingSupport) {
     pOutput->requestRayTracingSupport();
   }
+  jni::Array
 }
 
 JNIEXPORT void JNICALL
@@ -56,11 +61,12 @@ JNIEXPORT void JNICALL
 Java_com_kgaft_ResonanceEngine_Native_VulkanContext_VulkanContext_enumerateSupportedDevices(
     JNIEnv *env, jclass, jobject deviceBuilder, jobject output) {
   if (instance) {
+
     DeviceBuilder builder;
     toDeviceBuilder(env, deviceBuilder, &builder);
     supportedDevices.clear();
     auto devices = PhysicalDevice::getDevices(*instance);
-
+    
     for (auto device : *devices) {
       auto results = std::make_shared<DeviceSuitabilityResults>();
       if (DeviceSuitability::isDeviceSuitable(builder, device, results.get())) {
@@ -68,12 +74,12 @@ Java_com_kgaft_ResonanceEngine_Native_VulkanContext_VulkanContext_enumerateSuppo
       }
     }
     for (auto device : supportedDevices) {
+      auto clazz = env->FindClass("java/util/List");
+      auto methodId = env->GetMethodID(clazz, "add", "(Ljava/lang/Object;)Z");
       env->CallObjectMethod(
           output,
-          env->GetMethodID(env->GetObjectClass(output), "add",
-                           "(com/kgaft/ResonanceEngine/Native/VulkanContext/"
-                           "PhysicalDevice)V"),
-          createPhysicalDeviceInstance(env, device.first.get()));
+          methodId,
+          createPhysicalDeviceInstance(env, &device.first));
     }
   }
 }

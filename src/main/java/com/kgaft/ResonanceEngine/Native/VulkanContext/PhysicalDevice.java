@@ -7,6 +7,9 @@ public class PhysicalDevice {
         this.deviceHandle = deviceHandle;
     }
 
+    public PhysicalDevice() {   
+    }
+
     public native String getDeviceName();
 
 

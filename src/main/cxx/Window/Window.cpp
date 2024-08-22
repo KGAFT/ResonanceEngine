@@ -4,6 +4,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_vulkan.h>
 #include <iostream>
+#include <stdexcept>
 
 bool sdlInitialized = false;
 
@@ -97,13 +98,18 @@ Window *Window::createWindow(uint32_t width, uint32_t height,
 bool Window::needToClose() { return isNeedToClose; }
 
 VkSurfaceKHR Window::getWindowSurface(vk::Instance instance) {
-    if (!surface) {
+    if (surface==0) {
         if (SDL_Vulkan_CreateSurface((SDL_Window *) windowHandle, instance, nullptr,
                                       &surface)!=0) {
             auto error = SDL_GetError();
             std::cerr << error  << std::endl;
             throw std::runtime_error("Failed to create vulkan surface");
         }
+    }
+    if(surface==0){
+        auto error = SDL_GetError();
+        std::cerr << windowHandle <<" "<< error  << std::endl;
+        throw std::runtime_error("Failed to acquire surface");
     }
     return surface;
 }

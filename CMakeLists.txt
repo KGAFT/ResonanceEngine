@@ -22,6 +22,6 @@ execute_process(COMMAND javac -h ${CMAKE_CURRENT_SOURCE_DIR}/JniInterfaces ${JAV
 
 add_library(ResonanceEngineNative SHARED ${DEF_FILES} ${SRC_FILES})
 
-target_include_directories(ResonanceEngineNative PUBLIC src/main/cxx ${JNI_INCLUDE_DIRS} JniInterfaces NativeModules/include NativeModules/include_cfg)
+target_include_directories(ResonanceEngineNative PUBLIC src/main/cxx ${JNI_INCLUDE_DIRS} JniInterfaces NativeModules/include NativeModules/include_cfg modules/jni_hpp/include)
 
 target_link_libraries(ResonanceEngineNative PUBLIC VulkanLib SDL3::SDL3-shared ${LIN_SHARED_LIBS} ${WIN_SHARED_LIBS} ${WIN_STATIC_LIBS})
