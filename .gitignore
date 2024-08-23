@@ -36,7 +36,7 @@ replay_pid*
 /.cache
 /buildDir
 /builddir
-/NativeModules
+/bin
 /*build*
 /cmake-build-debug*
 /cmake-build-release*
