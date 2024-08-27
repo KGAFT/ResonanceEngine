@@ -1,4 +1,3 @@
-#include <iostream>
 #include "Settings/SettingsManager.hxx"
 #include "Settings/SettingsResizeCallback.hxx"
 #include "Vulkan/VulkanContext.hpp"
