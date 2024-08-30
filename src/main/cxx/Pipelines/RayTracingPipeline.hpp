@@ -13,7 +13,7 @@
 #include "VulkanLib/Device/Descriptors/DescriptorPool.hpp"
 
 class RayTracingPipeline {
-
+    friend class PipelineManager;
 public:
     RayTracingPipeline(std::shared_ptr<LogicalDevice> &device, Instance &instance, std::shared_ptr<vkLibRt::RayTracingPipelineBuilder>& builder, std::vector<ShaderCreateInfo>& shadersInfos);
 protected:

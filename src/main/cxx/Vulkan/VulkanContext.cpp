@@ -33,7 +33,7 @@ void VulkanContext::pickDevice(DeviceBuilder& deviceBuilder, uint32_t deviceInde
     if (!device) {
         device = std::make_shared<LogicalDevice>(instance, supportedDevices[deviceIndex], deviceBuilder,
                                                  &deviceSuitabilities[deviceIndex]);
-        swapChain = std::make_shared<SwapChain>(device, surfaceKhr, startWidth, startHeight, false);
+        swapChain = std::make_shared<SwapChain>(device, surfaceKhr, startWidth, startHeight,  false);
         syncManager = std::make_shared<SyncManager>(device, swapChain, device->getPresentQueue(),
                                                     swapChain->getSwapchainImageViews().size());
         descriptorPool = DescriptorPool::getInstance(device, true);

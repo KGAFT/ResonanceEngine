@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "Pipelines/OutputPipeline.hpp"
+#include "Pipelines/PipelineManager.hpp"
 #include "Settings/SettingsManager.hxx"
 #include "Settings/SettingsResizeCallback.hxx"
 #include "Vulkan/VulkanContext.hpp"
@@ -11,6 +12,10 @@
 #include "VulkanLib/Shader/ShaderLoader.hpp"
 
 
+/**
+ *
+ * @TODO fix memory leak after resizing
+ */
 int main() {
     auto window = Window::createWindow(1280, 720, "Hello world");
     SettingsManager::getInstance()->storeData<RESOLUTION_INFO_T>(RESOLUTION_INFO, glm::vec2(1280, 720));
@@ -30,7 +35,6 @@ int main() {
     VulkanContext::pickDevice(builder, result,
                               window->getWindowSurface(VulkanContext::getVulkanInstance().getInstance()),
                               window->getWidth(), window->getHeight());
-    std::shared_ptr<RenderPipelineBuilder> rBuilder = std::make_shared<RenderPipelineBuilder>();
     std::shared_ptr<OutputPipeline> pipeline = std::make_shared<OutputPipeline>(VulkanContext::getDevice());
 
 
@@ -51,50 +55,13 @@ int main() {
 
     pipeline->setMaxFramesInFlight(VulkanContext::getMaxFramesInFlight());
 
-    rBuilder->clear();
-    pipeline->populateBuilder(rBuilder);
-    auto shadersInfos = pipeline->getShadersInfos();
-    Shader *shader = ShaderLoader::getInstance()->createShader(*VulkanContext::getDevice(), *shadersInfos);
-    std::shared_ptr<GraphicsRenderPipeline> res;
-    if (!pipeline->attachToSwapChain()) {
-        res = std::make_shared<GraphicsRenderPipeline>(VulkanContext::getVulkanInstance(),
-                                                       VulkanContext::getDevice(),
-                                                       rBuilder.get(),
-                                                       shader,
-                                                       vk::Extent2D{
-                                                           static_cast<uint32_t>(window->getWidth() * 4),
-                                                           static_cast<uint32_t>(window->getHeight() * 4)
-                                                       },
-                                                       VulkanContext::getMaxFramesInFlight());
-    } else {
-        res = std::make_shared<GraphicsRenderPipeline>(VulkanContext::getVulkanInstance(), VulkanContext::getDevice(),
-                                                       VulkanContext::getSwapChain(), rBuilder.get(),
-                                                       shader,
-                                                       vk::Extent2D{
-                                                           static_cast<uint32_t>(window->getWidth()),
-                                                           static_cast<uint32_t>(window->getHeight())
-                                                       },
-                                                       VulkanContext::getMaxFramesInFlight());
-    }
-
-    pipeline->setRenderPipeline(res);
-    pipeline->setDescriptorPool(VulkanContext::getDescriptorPool());
-
-
-    pipeline->setup();
-
-
-    VulkanContext::getSyncManager()->addResizeCallback(pipeline);
+    PipelineManager pipelineManager;
+    pipelineManager.setPresentationPipeline(pipeline);
     window->addResizeCallback(VulkanContext::getSyncManager().get());
     window->enableRefreshRateInfo();
     while (!window->needToClose()) {
         window->preRenderEvents();
-        uint32_t curCmd;
-        auto cmd = VulkanContext::getSyncManager()->beginRender(curCmd);
-        pipeline->beginRender(cmd, curCmd);
-        pipeline->render(cmd, curCmd);
-        pipeline->endRender(cmd, curCmd);
-        VulkanContext::getSyncManager()->endRender();
+        pipelineManager.draw();
         window->postRenderEvents();
     }
     return 0;
