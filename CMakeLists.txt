@@ -12,10 +12,10 @@ add_subdirectory(modules/VulkanLib)
 add_subdirectory(modules/sdl)
 add_subdirectory(modules/assimp)
 
-
-
 file(GLOB_RECURSE DEF_FILES src/main/cxx/*.h*)
 file(GLOB_RECURSE SRC_FILES src/main/cxx/*.c*)
+
+file(COPY src/main/glsl/ DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders/)
 
 add_executable(ResonanceEngineNative ${DEF_FILES} ${SRC_FILES})
 
