@@ -1,13 +1,13 @@
 #extension GL_EXT_shader_explicit_arithmetic_types : require
 
 struct Material {
-    uint albedoIndex;
-    uint normalMapIndex;
-    uint metallicMapIndex;
-    uint roughnessMapIndex;
-    uint aoMapIndex;
-    uint emissiveMapIndex;
-    uint opacityMapIndex;
+    int albedoIndex;
+    int normalMapIndex;
+    int metallicMapIndex;
+    int roughnessMapIndex;
+    int aoMapIndex;
+    int emissiveMapIndex;
+    int opacityMapIndex;
 };
 
 

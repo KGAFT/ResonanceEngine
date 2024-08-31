@@ -25,13 +25,13 @@
 
 
 struct Material {
-    uint32_t albedoIndex = 0;
-    uint32_t normalMapIndex = 0;
-    uint32_t metallicMapIndex = 0;
-    uint32_t roughnessMapIndex = 0;
-    uint32_t aoMapIndex = 0;
-    uint32_t emissiveMapIndex = 0;
-    uint32_t opacityMapIndex = 0;
+    int32_t albedoIndex = -1;
+    int32_t normalMapIndex = -1;
+    int32_t metallicMapIndex = -1;
+    int32_t roughnessMapIndex = -1;
+    int32_t aoMapIndex = -1;
+    int32_t emissiveMapIndex = -1;
+    int32_t opacityMapIndex = -1;
 };
 
 #define TEXTURES_BUFFER_BINDING 0
