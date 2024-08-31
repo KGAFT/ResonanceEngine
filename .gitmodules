@@ -4,9 +4,7 @@
 [submodule "modules/sdl"]
 	path = modules/sdl
 	url = https://github.com/libsdl-org/SDL
-[submodule "modules/assimp"]
-	path = modules/assimp
-	url = https://github.com/assimp/assimp
+
 [submodule "modules/jni_hpp"]
 	path = modules/jni_hpp
 	url = https://github.com/mapbox/jni.hpp
