@@ -24,5 +24,5 @@ add_executable(ResonanceEngineNative ${DEF_FILES} ${SRC_FILES})
 
 target_include_directories(ResonanceEngineNative PUBLIC src/main/cxx NativeModules/include NativeModules/include_cfg)
 
-target_link_libraries(ResonanceEngineNative PUBLIC VulkanLib SDL3::SDL3-shared assimp glm)
+target_link_libraries(ResonanceEngineNative PUBLIC VulkanLib SDL3::SDL3-shared assimp glm::glm-header-only)
 
