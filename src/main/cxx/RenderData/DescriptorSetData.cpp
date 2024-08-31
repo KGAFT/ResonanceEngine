@@ -84,8 +84,8 @@ void DescriptorSetData::confirmAndWriteDataToDescriptorSet() const {
         }
     }
     if (instanceCount > 1) {
-        descriptorSet->setBufferInfoPerInstanceAmount(uniformBuffers[0].size());
-        descriptorSet->setImageInfoPerInstanceAmount(samplers[0].size());
+        descriptorSet->setBufferInfoPerInstanceAmount((uint32_t)uniformBuffers[0].size());
+        descriptorSet->setImageInfoPerInstanceAmount((uint32_t)samplers[0].size());
     }
     descriptorSet->updateDescriptors();
     descriptorSet->clearObjectsInfos();

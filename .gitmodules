@@ -8,3 +8,6 @@
 [submodule "modules/jni_hpp"]
 	path = modules/jni_hpp
 	url = https://github.com/mapbox/jni.hpp
+[submodule "modules/assimp"]
+	path = modules/assimp
+	url = https://github.com/assimp/assimp/

@@ -11,7 +11,6 @@
 #include "Verbose/DevicePicker/DevicePickerConsole.hxx"
 #include "VulkanLib/Shader/ShaderLoader.hpp"
 
-
 /**
  *
  * @TODO fix memory leak after resizing
