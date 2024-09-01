@@ -17,7 +17,7 @@ struct WorldTransformData {
 
 class GBufferPipeline : public IPipelineGraphics, public IResizeCallback{
 public:
-    GBufferPipeline(const std::shared_ptr<LogicalDevice>& device, std::shared_ptr<RenderObjectsDataManager> renderObjectsManager) : device(device), renderObjectsManager(renderObjectsManager){}
+    GBufferPipeline(const std::shared_ptr<LogicalDevice>& device, std::shared_ptr<RenderObjectsDataManager> dataManager) : device(device), dataManager(dataManager){}
 private:
     std::shared_ptr<LogicalDevice> device;
     std::shared_ptr<DescriptorPool> descriptorPool;
@@ -26,8 +26,9 @@ private:
     uint32_t framesInFlight;
     std::shared_ptr<PushConstant> pushConstant;
     std::pair<std::shared_ptr<IndexBuffer>, std::shared_ptr<VertexBuffer>> quadMesh;
-    std::shared_ptr<RenderObjectsDataManager> renderObjectsManager;
-    std::shared_ptr<DescriptorSetData> renderData;
+    std::shared_ptr<DescriptorSet> renderData;
+    std::shared_ptr<UniformBuffer> uniformBuffer;
+    std::shared_ptr<RenderObjectsDataManager> dataManager;
     WorldTransformData data;
 public:
     void populateBuilder(std::shared_ptr<RenderPipelineBuilder> builder) override;
@@ -54,13 +55,10 @@ public:
 
     void render(vk::CommandBuffer cmd, uint32_t currentImage) override;
 
-    void addAttachment(std::shared_ptr<ImageView> attachment);
-
-    void updateDescriptors(bool afterResize);
-
     void endRender(vk::CommandBuffer cmd, uint32_t currentImage) override;
 
     void bindBatchData(vk::CommandBuffer cmd, uint32_t currentImage, std::shared_ptr<RenderObjectsDataManager> batchData) override;
+
     void setupGlobalDescriptor(std::shared_ptr<RenderObjectsDataManager> dataManager) override;
 
 

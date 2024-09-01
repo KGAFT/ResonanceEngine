@@ -5,12 +5,13 @@
 #include "GBufferPipeline.hpp"
 
 void GBufferPipeline::populateBuilder(std::shared_ptr<RenderPipelineBuilder> builder) {
-	renderObjectsManager->presetBuilder(builder, vk::ShaderStageFlagBits::eFragment);
+	dataManager->presetBuilder(builder, vk::ShaderStageFlagBits::eFragment);
 	builder->addUniformBuffer({ 3, sizeof(WorldTransformData), 1, vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment });
 	builder->addVertexInput({ 0, 3, sizeof(float), vk::Format::eR32G32B32Sfloat });
 	builder->addVertexInput({ 1, 3, sizeof(float), vk::Format::eR32G32B32Sfloat });
 	builder->addVertexInput({ 2, 2, sizeof(float), vk::Format::eR32G32Sfloat });
 	builder->addVertexInput({ 3, 1, sizeof(int32_t), vk::Format::eR32Sint });
+	builder->setAttachmentsPerStepAmount(4);
 }
 
 std::shared_ptr<std::vector<ShaderCreateInfo>> GBufferPipeline::getShadersInfos() {
@@ -23,13 +24,13 @@ std::shared_ptr<std::vector<ShaderCreateInfo>> GBufferPipeline::getShadersInfos(
 void GBufferPipeline::render(vk::CommandBuffer cmd, uint32_t currentImage, std::shared_ptr<Mesh> mesh,
 	std::shared_ptr<IndirectBuffer> indirectBuffer, size_t indirectOffset) {
 	data.worldMatrix = mesh->calculateWorldMatrix();
-	memcpy(renderData->getUniformBufferByBinding(3)->getMapPoint(), &data, sizeof(WorldTransformData));
+	memcpy(uniformBuffer->getMapPoint(), &data, sizeof(WorldTransformData));
 	cmd.drawIndexedIndirect(indirectBuffer->getBuffer(), mesh->getIndirectOffset(), 1, (uint32_t)indirectBuffer->getSizeOfStructure());
 }
 
 void GBufferPipeline::beginRender(vk::CommandBuffer cmd, uint32_t currentImage) {
 	renderPipeline->begin(cmd, currentImage);
-	renderData->getDescriptorSet()->bindDescriptor(vk::PipelineBindPoint::eGraphics, currentImage, cmd, renderPipeline->getGraphicsPipeline()->getPipelineLayout());
+	renderData->bindDescriptor(vk::PipelineBindPoint::eGraphics, currentImage, cmd, renderPipeline->getGraphicsPipeline()->getPipelineLayout());
 }
 
 void GBufferPipeline::setDescriptorPool(std::shared_ptr<DescriptorPool> descriptorPool) {
@@ -49,5 +50,54 @@ void GBufferPipeline::setMaxFramesInFlight(uint32_t framesInFlight) {
 }
 
 void GBufferPipeline::setup() {
-	renderObjectsManager->
+
+}
+
+void GBufferPipeline::resized(uint32_t width, uint32_t height) {
+	device->getDevice().waitIdle();
+	renderPipeline->resize(width, height);
+}
+
+void GBufferPipeline::render(vk::CommandBuffer cmd, uint32_t currentImage) {
+
+}
+
+void GBufferPipeline::endRender(vk::CommandBuffer cmd, uint32_t currentImage) {
+	renderPipeline->endRender(cmd, currentImage);
+}
+
+void GBufferPipeline::bindBatchData(vk::CommandBuffer cmd, uint32_t currentImage, std::shared_ptr<RenderObjectsDataManager> batchData) {
+	batchData->getBatchVertex()->bind(cmd);
+	batchData->getBatchIndex()->bind(cmd);
+}
+
+void GBufferPipeline::setupGlobalDescriptor(std::shared_ptr<RenderObjectsDataManager> dataManager) {
+	renderData = descriptorPool->allocateDescriptorSet(framesInFlight, renderPipeline->getGraphicsPipeline()->getDescriptorLayout());
+	uniformBuffer = std::make_shared<UniformBuffer>(device, sizeof(WorldTransformData));
+	dataManager->writeImagesInfos(renderData);
+	dataManager->writeMaterialsInfos(renderData);
+	DescriptorBufferInfo bufferInfo{};
+	bufferInfo.base.push_back({ uniformBuffer->getBuffer(), 0, sizeof(WorldTransformData) });
+	renderData->addBufferInfo(bufferInfo);
+
+	memcpy(uniformBuffer->getMapPoint(), &data, sizeof(WorldTransformData));
+	renderData->updateDescriptors();
+	renderData->clearObjectsInfos();
+}
+
+
+
+void GBufferPipeline::setupMesh(std::shared_ptr<Mesh> mesh) {
+
+}
+
+bool GBufferPipeline::processMeshes() {
+	return true;
+}
+
+
+void GBufferPipeline::destroy() {
+	uniformBuffer->destroy();
+	
+	renderPipeline->destroy();
 }

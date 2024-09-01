@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "Pipelines/OutputPipeline.hpp"
+#include "Pipelines/Standart/OutputPipeline.hpp"
 #include "Pipelines/PipelineManager.hpp"
 #include "Settings/SettingsManager.hxx"
 #include "Settings/SettingsResizeCallback.hxx"
@@ -10,6 +10,7 @@
 #include "Verbose/EngineLogger.hxx"
 #include "Verbose/DevicePicker/DevicePickerConsole.hxx"
 #include "VulkanLib/Shader/ShaderLoader.hpp"
+#include <Pipelines/Standart/GBufferPipeline.hpp>
 
 /**
  *
@@ -35,7 +36,7 @@ int main() {
                               window->getWindowSurface(VulkanContext::getVulkanInstance().getInstance()),
                               window->getWidth(), window->getHeight());
     std::shared_ptr<OutputPipeline> pipeline = std::make_shared<OutputPipeline>(VulkanContext::getDevice());
-
+    std::shared_ptr<GBufferPipeline> gPipeline = std::make_shared<GBufferPipeline>(VulkanContext::getDevice());
 
     std::vector<std::shared_ptr<Image>> usedImages;
 
@@ -56,6 +57,7 @@ int main() {
 
     PipelineManager pipelineManager;
     pipelineManager.setPresentationPipeline(pipeline);
+    pipelineManager.addGraphicsPipeline(gPipeline);
     window->addResizeCallback(VulkanContext::getSyncManager().get());
     window->enableRefreshRateInfo();
     while (!window->needToClose()) {
