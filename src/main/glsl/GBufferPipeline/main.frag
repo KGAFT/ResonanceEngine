@@ -11,7 +11,7 @@ layout(location = 2) out vec4 readyNormal;
 layout(location = 3) out vec4 readyMetallicRoughnessAoEmissive;
 
 
-layout(push_constant) uniform WorldTransformData{
+layout(std430, binding = 2, set = 0) uniform WorldTransformData{
     mat4 viewMatrix;
     mat4 worldMatrix;
     vec3 cameraPosition;

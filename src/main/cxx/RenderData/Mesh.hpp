@@ -72,6 +72,10 @@ public:
     void setScale(const glm::vec3 &scale) { Mesh::scale = scale; }
 
     const std::string &getName() const { return name; }
+
+    size_t getIndirectOffset() {
+        return indirectOffset;
+    }
 private:
     void setTransformMatrixKhr(VkTransformMatrixKHR *transformMatrixKhr);
 
