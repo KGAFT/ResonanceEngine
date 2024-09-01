@@ -6,11 +6,11 @@
 
 void GBufferPipeline::populateBuilder(std::shared_ptr<RenderPipelineBuilder> builder) {
 	dataManager->presetBuilder(builder, vk::ShaderStageFlagBits::eFragment);
-	builder->addUniformBuffer({ 3, sizeof(WorldTransformData), 1, vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment });
+	builder->addUniformBuffer({ 2, sizeof(WorldTransformData), 1, vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment });
 	builder->addVertexInput({ 0, 3, sizeof(float), vk::Format::eR32G32B32Sfloat });
 	builder->addVertexInput({ 1, 3, sizeof(float), vk::Format::eR32G32B32Sfloat });
 	builder->addVertexInput({ 2, 2, sizeof(float), vk::Format::eR32G32Sfloat });
-	builder->addVertexInput({ 3, 1, sizeof(int32_t), vk::Format::eR32Sint });
+	builder->addVertexInput({ 3, 1, sizeof(int32_t), vk::Format::eR32Uint });
 	builder->setAttachmentsPerStepAmount(4);
 }
 
@@ -78,6 +78,8 @@ void GBufferPipeline::setupGlobalDescriptor(std::shared_ptr<RenderObjectsDataMan
 	dataManager->writeMaterialsInfos(renderData);
 	DescriptorBufferInfo bufferInfo{};
 	bufferInfo.base.push_back({ uniformBuffer->getBuffer(), 0, sizeof(WorldTransformData) });
+	bufferInfo.binding = 2;
+	bufferInfo.descriptorType = vk::DescriptorType::eUniformBuffer;
 	renderData->addBufferInfo(bufferInfo);
 
 	memcpy(uniformBuffer->getMapPoint(), &data, sizeof(WorldTransformData));
@@ -85,6 +87,9 @@ void GBufferPipeline::setupGlobalDescriptor(std::shared_ptr<RenderObjectsDataMan
 	renderData->clearObjectsInfos();
 }
 
+std::shared_ptr<GraphicsRenderPipeline> GBufferPipeline::getRenderPipeline() const {
+	return renderPipeline;
+}
 
 
 void GBufferPipeline::setupMesh(std::shared_ptr<Mesh> mesh) {

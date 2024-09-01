@@ -1,9 +1,10 @@
 #version 460 core
+#extension GL_EXT_scalar_block_layout : require
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normals;
 layout(location = 2) in vec2 textureCoordinates;
-layout(location = 3) in uint rMaterialIndex;
+layout(location = 3) flat in uint materialIndex;
 
 layout(location = 0) out vec4 readyPos;
 layout(location = 1) out vec4 readyAlbedo;
@@ -30,7 +31,7 @@ void main(){
     readyNormal = vec4(parseNormals(), 1.0f);
     vec2 metallicRoughness = parseMetallicRoughness();
     vec2 aoEmissive = parseAoEmissive(readyAlbedo.rgb);
-    readyMetallicRoughnessEmissive = vec4(metallicRoughness, aoEmissive.r, aoEmissive.g);
+    readyMetallicRoughnessAoEmissive = vec4(metallicRoughness, aoEmissive.r, aoEmissive.g);
 }
 
 vec4 parseAlbedo(){
@@ -83,7 +84,7 @@ vec3 getNormalFromMap(vec2 uvsCoords, vec3 normals, vec3 fragmentPosition)
 }
 
 vec3 parseNormals(){
-    return getNormalFromMap(textureCoordinates, res, position);
+    return getNormalFromMap(textureCoordinates, normals, position);
 }
 
 float getEmissivePower(int emissiveIndex, vec2 UvsCoords, vec3 albedoColor){
@@ -104,6 +105,5 @@ vec2 parseAoEmissive(vec3 albedo){
     if(emissiveIndex!=-1){
         res.g+=getEmissivePower(emissiveIndex, textureCoordinates, albedo);
     }
-    res.g*=materialConfig.emissiveMultiplier;
     return res;
 }

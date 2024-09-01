@@ -15,6 +15,7 @@ class PipelineManager : public IDestroyableObject, public IResizeCallback{
 public:
     PipelineManager() {
         VulkanContext::getSyncManager()->addResizeCallback(this);
+        shaderLoaderInstance->getIncludeDirectories().push_back("shaders/");
     }
 
 private:

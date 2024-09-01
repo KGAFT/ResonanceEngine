@@ -61,6 +61,7 @@ public:
 
     void setupGlobalDescriptor(std::shared_ptr<RenderObjectsDataManager> dataManager) override;
 
+    [[nodiscard]] std::shared_ptr<GraphicsRenderPipeline> getRenderPipeline() const;
 
 
     void setupMesh(std::shared_ptr<Mesh> mesh) override;

@@ -11,11 +11,8 @@
 #include "Verbose/DevicePicker/DevicePickerConsole.hxx"
 #include "VulkanLib/Shader/ShaderLoader.hpp"
 #include <Pipelines/Standart/GBufferPipeline.hpp>
+#include <Assets/AssetImporter.hpp>
 
-/**
- *
- * @TODO fix memory leak after resizing
- */
 int main() {
     auto window = Window::createWindow(1280, 720, "Hello world");
     SettingsManager::getInstance()->storeData<RESOLUTION_INFO_T>(RESOLUTION_INFO, glm::vec2(1280, 720));
@@ -35,33 +32,36 @@ int main() {
     VulkanContext::pickDevice(builder, result,
                               window->getWindowSurface(VulkanContext::getVulkanInstance().getInstance()),
                               window->getWidth(), window->getHeight());
+
+    AssetImporter importer(VulkanContext::getDevice(), false);
+    auto model = importer.loadModel("assets/2.0/ABeautifulGame/glTF/ABeautifulGame.gltf");
+    auto renderData = importer.makeBatchData();
     std::shared_ptr<OutputPipeline> pipeline = std::make_shared<OutputPipeline>(VulkanContext::getDevice());
-    std::shared_ptr<GBufferPipeline> gPipeline = std::make_shared<GBufferPipeline>(VulkanContext::getDevice());
+    std::shared_ptr<GBufferPipeline> gPipeline = std::make_shared<GBufferPipeline>(VulkanContext::getDevice(), renderData);
 
-    std::vector<std::shared_ptr<Image>> usedImages;
 
-    for(uint32_t i = 0; i < VulkanContext::getMaxFramesInFlight(); i++) {
-        auto imageF = GraphicsRenderPipeline::getRenderImagePool(VulkanContext::getDevice())->acquireColorRenderImage(800, 600);
-        auto imageS = GraphicsRenderPipeline::getRenderImagePool(VulkanContext::getDevice())->acquireColorRenderImage(800, 600);
-        auto imageT = GraphicsRenderPipeline::getRenderImagePool(VulkanContext::getDevice())->acquireColorRenderImage(800, 600);
-        pipeline->setMaxFramesInFlight(VulkanContext::getMaxFramesInFlight());
-        pipeline->addAttachment(imageF->getImageViews()[0]);
-        pipeline->addAttachment(imageS->getImageViews()[0]);
-        pipeline->addAttachment(imageT->getImageViews()[0]);
-        usedImages.push_back(imageF);
-        usedImages.push_back(imageS);
-        usedImages.push_back(imageT);
-    }
 
     pipeline->setMaxFramesInFlight(VulkanContext::getMaxFramesInFlight());
 
     PipelineManager pipelineManager;
     pipelineManager.setPresentationPipeline(pipeline);
     pipelineManager.addGraphicsPipeline(gPipeline);
+    for(uint32_t i = 0; i < VulkanContext::getMaxFramesInFlight(); i++) {
+
+        pipeline->setMaxFramesInFlight(VulkanContext::getMaxFramesInFlight());
+        pipeline->addAttachment(gPipeline->getRenderPipeline()->getBaseRenderImages()[4*i+0]->getImageViews()[0]);
+        pipeline->addAttachment(gPipeline->getRenderPipeline()->getBaseRenderImages()[4*i+1]->getImageViews()[0]);
+        pipeline->addAttachment(gPipeline->getRenderPipeline()->getBaseRenderImages()[4*i+2]->getImageViews()[0]);
+
+    }
+    gPipeline->setupGlobalDescriptor(renderData);
     window->addResizeCallback(VulkanContext::getSyncManager().get());
     window->enableRefreshRateInfo();
+    int templ;
+    std::cin>>templ;
     while (!window->needToClose()) {
         window->preRenderEvents();
+
         pipelineManager.draw();
         window->postRenderEvents();
     }

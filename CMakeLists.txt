@@ -19,7 +19,7 @@ file(GLOB_RECURSE DEF_FILES src/main/cxx/*.h*)
 file(GLOB_RECURSE SRC_FILES src/main/cxx/*.c*)
 
 file(COPY src/main/glsl/ DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders/)
-
+file(COPY assets DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 add_executable(ResonanceEngineNative ${DEF_FILES} ${SRC_FILES})
 
 target_include_directories(ResonanceEngineNative PUBLIC src/main/cxx NativeModules/include NativeModules/include_cfg)
