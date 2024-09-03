@@ -49,10 +49,12 @@ public:
         worldMatrix = glm::rotate(worldMatrix, rotation.y, glm::vec3(0, 1, 0));
         worldMatrix = glm::rotate(worldMatrix, rotation.z, glm::vec3(0, 0, 1));
         worldMatrix = glm::scale(worldMatrix, scale);
-        if (transformMatrixKhr) {
+        /*
+        if (transformMatrixKhr!=nullptr) {
             auto vkWorldMatrix = glmMat4toTransformMatrixKHR(worldMatrix);
             memcpy(transformMatrixKhr, &vkWorldMatrix, sizeof(VkTransformMatrixKHR));
         }
+        */
         return worldMatrix;
     }
 

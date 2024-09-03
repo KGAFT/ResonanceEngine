@@ -63,6 +63,7 @@ public:
 
     [[nodiscard]] std::shared_ptr<GraphicsRenderPipeline> getRenderPipeline() const;
 
+    void setCameraMatrix(glm::mat4 cameraMatrix, glm::vec3 camPos);
 
     void setupMesh(std::shared_ptr<Mesh> mesh) override;
 

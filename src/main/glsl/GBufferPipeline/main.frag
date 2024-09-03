@@ -27,11 +27,11 @@ vec2 parseAoEmissive(vec3 albedo);
 
 void main(){
     readyPos = vec4(position, 1.0f);
-    readyAlbedo = parseAlbedo();
-    readyNormal = vec4(parseNormals(), 1.0f);
-    vec2 metallicRoughness = parseMetallicRoughness();
-    vec2 aoEmissive = parseAoEmissive(readyAlbedo.rgb);
-    readyMetallicRoughnessAoEmissive = vec4(metallicRoughness, aoEmissive.r, aoEmissive.g);
+  //  readyAlbedo = parseAlbedo();
+  //  readyNormal = vec4(parseNormals(), 1.0f);
+ //   vec2 metallicRoughness = parseMetallicRoughness();
+ //   vec2 aoEmissive = parseAoEmissive(readyAlbedo.rgb);
+  //  readyMetallicRoughnessAoEmissive = vec4(metallicRoughness, aoEmissive.r, aoEmissive.g);
 }
 
 vec4 parseAlbedo(){

@@ -112,6 +112,7 @@ public:
         Material material{};
         AssetImporter::loadTextures(device, scene, mesh, material);
         uint32_t materialId = dataManager->pushMaterial(material);
+        std::cout<<materialId<<std::endl;
         drawCommands.push_back({});
         drawCommands[drawCommands.size() - 1].vertexOffset = vertexBuffer.size() / 9;
         drawCommands[drawCommands.size() - 1].firstIndex = indexBuffer.size();

@@ -43,9 +43,17 @@ public:
         rtPipeline->setup(VulkanContext::getDescriptorPool(), resolution.x, resolution.y);
     }
 
-    void draw() {
+    void draw(std::shared_ptr<RenderObjectsDataManager> renderObjects, std::shared_ptr<Model> model) {
         uint32_t curCmd;
         auto cmd = VulkanContext::getSyncManager()->beginRender(curCmd);
+        for (auto gPipeline : graphicsPipelines) {
+            gPipeline->beginRender(cmd, curCmd);
+            gPipeline->bindBatchData(cmd, curCmd, renderObjects);
+            for (auto mesh : model->getMeshes()) {
+                gPipeline->render(cmd, curCmd, mesh, renderObjects->getIndirectBuffer(), mesh->getIndirectOffset());
+            }
+            gPipeline->endRender(cmd, curCmd);
+        }
         presentationPipeline->beginRender(cmd, curCmd);
         presentationPipeline->render(cmd, curCmd);
         presentationPipeline->endRender(cmd, curCmd);

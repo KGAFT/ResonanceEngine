@@ -10,7 +10,7 @@ void GBufferPipeline::populateBuilder(std::shared_ptr<RenderPipelineBuilder> bui
 	builder->addVertexInput({ 0, 3, sizeof(float), vk::Format::eR32G32B32Sfloat });
 	builder->addVertexInput({ 1, 3, sizeof(float), vk::Format::eR32G32B32Sfloat });
 	builder->addVertexInput({ 2, 2, sizeof(float), vk::Format::eR32G32Sfloat });
-	builder->addVertexInput({ 3, 1, sizeof(int32_t), vk::Format::eR32Uint });
+	builder->addVertexInput({ 3, 1, sizeof(float), vk::Format::eR32Sfloat });
 	builder->setAttachmentsPerStepAmount(4);
 }
 
@@ -23,7 +23,7 @@ std::shared_ptr<std::vector<ShaderCreateInfo>> GBufferPipeline::getShadersInfos(
 
 void GBufferPipeline::render(vk::CommandBuffer cmd, uint32_t currentImage, std::shared_ptr<Mesh> mesh,
 	std::shared_ptr<IndirectBuffer> indirectBuffer, size_t indirectOffset) {
-	data.worldMatrix = mesh->calculateWorldMatrix();
+	data.worldMatrix = glm::mat4(1.0f);
 	memcpy(uniformBuffer->getMapPoint(), &data, sizeof(WorldTransformData));
 	cmd.drawIndexedIndirect(indirectBuffer->getBuffer(), mesh->getIndirectOffset(), 1, (uint32_t)indirectBuffer->getSizeOfStructure());
 }
@@ -89,6 +89,11 @@ void GBufferPipeline::setupGlobalDescriptor(std::shared_ptr<RenderObjectsDataMan
 
 std::shared_ptr<GraphicsRenderPipeline> GBufferPipeline::getRenderPipeline() const {
 	return renderPipeline;
+}
+
+void GBufferPipeline::setCameraMatrix(glm::mat4 cameraMatrix, glm::vec3 camPos) {
+	data.worldMatrix = cameraMatrix;
+	data.cameraPosition = camPos;
 }
 
 

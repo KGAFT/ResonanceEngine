@@ -26,5 +26,5 @@ void main() {
     if(config.enableInput[2]>=1){
         resColor+=texture(thirdLayer, uvs);
     }
-    FragColor = vec4(0.5, 0.3, 0.2, 1.0f);
+    FragColor = resColor;
 }

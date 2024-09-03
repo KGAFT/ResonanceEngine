@@ -13,6 +13,8 @@
 #include <Pipelines/Standart/GBufferPipeline.hpp>
 #include <Assets/AssetImporter.hpp>
 
+#include "Camera/CameraManager.hxx"
+
 int main() {
     auto window = Window::createWindow(1280, 720, "Hello world");
     SettingsManager::getInstance()->storeData<RESOLUTION_INFO_T>(RESOLUTION_INFO, glm::vec2(1280, 720));
@@ -23,7 +25,7 @@ int main() {
     uint32_t deviceCount;
     DeviceBuilder builder;
     builder.requestGraphicsSupport();
-    builder.requestRayTracingSupport();
+    //builder.requestRayTracingSupport();
     builder.requestPresentSupport(window->getWindowSurface(VulkanContext::getVulkanInstance().getInstance()));
     auto devices = VulkanContext::enumerateSupportedDevices(
         builder, window->getWindowSurface(VulkanContext::getVulkanInstance().getInstance()), &deviceCount);
@@ -34,7 +36,7 @@ int main() {
                               window->getWidth(), window->getHeight());
 
     AssetImporter importer(VulkanContext::getDevice(), false);
-    auto model = importer.loadModel("assets/2.0/ABeautifulGame/glTF/ABeautifulGame.gltf");
+    auto model = importer.loadModel("assets/2.0/Sponza/glTF/Sponza.gltf");
     auto renderData = importer.makeBatchData();
     std::shared_ptr<OutputPipeline> pipeline = std::make_shared<OutputPipeline>(VulkanContext::getDevice());
     std::shared_ptr<GBufferPipeline> gPipeline = std::make_shared<GBufferPipeline>(VulkanContext::getDevice(), renderData);
@@ -44,7 +46,6 @@ int main() {
     pipeline->setMaxFramesInFlight(VulkanContext::getMaxFramesInFlight());
 
     PipelineManager pipelineManager;
-    pipelineManager.setPresentationPipeline(pipeline);
     pipelineManager.addGraphicsPipeline(gPipeline);
     for(uint32_t i = 0; i < VulkanContext::getMaxFramesInFlight(); i++) {
 
@@ -55,14 +56,21 @@ int main() {
 
     }
     gPipeline->setupGlobalDescriptor(renderData);
+    pipelineManager.setPresentationPipeline(pipeline);
+
     window->addResizeCallback(VulkanContext::getSyncManager().get());
     window->enableRefreshRateInfo();
-    int templ;
-    std::cin>>templ;
+    window->getInputSystem().registerKeyCallback(pipeline.get());
+    CameraManager cameraManager(window);
+
     while (!window->needToClose()) {
         window->preRenderEvents();
-
-        pipelineManager.draw();
+        glm::mat4 camMatrix;
+        glm::vec3 camPos;
+        cameraManager.getCurrentCamera()->calculateCameraMatrix(camMatrix, 75, 0.05f, 26000, window->getWidth()/window->getHeight());
+        cameraManager.getCurrentCamera()->getPosition(camPos);
+        gPipeline->setCameraMatrix(camMatrix, camPos);
+        pipelineManager.draw(renderData, model);
         window->postRenderEvents();
     }
     return 0;

@@ -16,8 +16,8 @@ Instance &VulkanContext::getVulkanInstance() {
             instanceBuilder.addExtension(extensions[i]);
         }
         if (Instance::debugSupported()) {
-            instanceBuilder.presetForDebug();
-            instanceBuilder.addLoggerCallback(EngineLogger::getVulkanCallback());
+          //  instanceBuilder.presetForDebug();
+          //  instanceBuilder.addLoggerCallback(EngineLogger::getVulkanCallback());
         }
         instance = Instance(instanceBuilder);
         apiInitialized = true;
