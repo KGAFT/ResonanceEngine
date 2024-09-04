@@ -80,9 +80,9 @@ public:
 
     std::shared_ptr<RenderObjectsDataManager> makeBatchData() {
         auto resVertexBuffer = std::make_shared<VertexBuffer>(device, vertexBuffer.data(), vertexBuffer.size() / 9,
-            9 * sizeof(float), vk::Format::eR32G32B32Sfloat, true);
+            9 * sizeof(float), vk::Format::eR32G32B32Sfloat, false);
         auto resIndexBuffer = std::make_shared<IndexBuffer>(device, indexBuffer.data(), indexBuffer.size(),
-            vk::IndexType::eUint32, true);
+            vk::IndexType::eUint32, false);
         auto indirectBuffer = std::make_shared<IndirectBuffer>(device, drawCommands.size(),
             sizeof(vk::DrawIndexedIndirectCommand));
         memcpy(indirectBuffer->getMapPoint(), drawCommands.data(),
@@ -112,7 +112,6 @@ public:
         Material material{};
         AssetImporter::loadTextures(device, scene, mesh, material);
         uint32_t materialId = dataManager->pushMaterial(material);
-        std::cout<<materialId<<std::endl;
         drawCommands.push_back({});
         drawCommands[drawCommands.size() - 1].vertexOffset = vertexBuffer.size() / 9;
         drawCommands[drawCommands.size() - 1].firstIndex = indexBuffer.size();

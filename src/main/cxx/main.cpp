@@ -62,12 +62,14 @@ int main() {
     window->enableRefreshRateInfo();
     window->getInputSystem().registerKeyCallback(pipeline.get());
     CameraManager cameraManager(window);
-
+    for (auto mesh : model->getMeshes()) {
+        mesh->setScale(glm::vec3(5, 5, 5));
+        mesh->setPosition(glm::vec3(10, 10, 10));
+    }
     while (!window->needToClose()) {
         window->preRenderEvents();
-        glm::mat4 camMatrix;
+        glm::mat4 camMatrix = cameraManager.getCurrentCamera()->calculateCameraMatrix( 75, 0.05f, 2600, (float)window->getWidth()/(float)window->getHeight());
         glm::vec3 camPos;
-        cameraManager.getCurrentCamera()->calculateCameraMatrix(camMatrix, 75, 0.05f, 26000, window->getWidth()/window->getHeight());
         cameraManager.getCurrentCamera()->getPosition(camPos);
         gPipeline->setCameraMatrix(camMatrix, camPos);
         pipelineManager.draw(renderData, model);

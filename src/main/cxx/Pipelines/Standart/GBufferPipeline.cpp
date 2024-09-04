@@ -23,7 +23,7 @@ std::shared_ptr<std::vector<ShaderCreateInfo>> GBufferPipeline::getShadersInfos(
 
 void GBufferPipeline::render(vk::CommandBuffer cmd, uint32_t currentImage, std::shared_ptr<Mesh> mesh,
 	std::shared_ptr<IndirectBuffer> indirectBuffer, size_t indirectOffset) {
-	data.worldMatrix = glm::mat4(1.0f);
+	data.worldMatrix = mesh->calculateWorldMatrix();
 	memcpy(uniformBuffer->getMapPoint(), &data, sizeof(WorldTransformData));
 	cmd.drawIndexedIndirect(indirectBuffer->getBuffer(), mesh->getIndirectOffset(), 1, (uint32_t)indirectBuffer->getSizeOfStructure());
 }

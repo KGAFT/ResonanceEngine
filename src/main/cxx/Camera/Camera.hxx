@@ -23,14 +23,14 @@ private:
     glm::vec3 orientation = glm::vec3(0.0f, 0.0f, -1.0f);
 
 public:
-    void calculateCameraMatrix(glm::mat4 &output, float fov,
+    glm::mat4 calculateCameraMatrix(float fov,
                                    float nearPlane, float farPlane, float aspectRatio) {
         glm::mat4 view = glm::mat4(1.0f);
         glm::mat4 projection = glm::mat4(1.0f);
         view = glm::lookAt(position, position + orientation, up);
-        projection =
-                glm::perspective(glm::radians(fov), aspectRatio, nearPlane, farPlane);
-        output = projection * view;
+        projection = glm::perspective(glm::radians(fov), aspectRatio, nearPlane,
+                                      farPlane);
+        return projection*view;
     }
 
     void calculateRayTracingCameraMatrix(glm::mat4 &viewOutput, glm::mat4 &projectionOutput, float fov, float nearPlane,
