@@ -62,7 +62,7 @@ void Window::pollEvents() {
     }
 }
 
-int resizingEventWatcher(void *data, SDL_Event *event) {
+bool resizingEventWatcher(void *data, SDL_Event *event) {
     if (event->type == SDL_EVENT_WINDOW_RESIZED) {
         SDL_Window *win = SDL_GetWindowFromID(event->window.windowID);
         for (auto &item: windowInstances) {
@@ -99,12 +99,8 @@ bool Window::needToClose() { return isNeedToClose; }
 
 VkSurfaceKHR Window::getWindowSurface(vk::Instance instance) {
     if (surface==0) {
-        if (SDL_Vulkan_CreateSurface((SDL_Window *) windowHandle, instance, nullptr,
-                                      &surface)!=0) {
-            auto error = SDL_GetError();
-            std::cerr << error  << std::endl;
-            throw std::runtime_error("Failed to create vulkan surface");
-        }
+        SDL_Vulkan_CreateSurface((SDL_Window *) windowHandle, instance, nullptr,
+                                      &surface);
     }
     if(surface==0){
         auto error = SDL_GetError();

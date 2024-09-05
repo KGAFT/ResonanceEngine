@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.5)
 project(ResonanceEngineNative)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(VulkanSDKPath /opt/vulkan_sdk/1.3.290.0/x86_64)
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)

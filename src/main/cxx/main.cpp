@@ -36,7 +36,7 @@ int main() {
                               window->getWidth(), window->getHeight());
 
     AssetImporter importer(VulkanContext::getDevice(), false);
-    auto model = importer.loadModel("assets/2.0/Sponza/glTF/Sponza.gltf");
+    auto model = importer.loadModel("assets/Sponza/glTF/Sponza.gltf");
     auto renderData = importer.makeBatchData();
     std::shared_ptr<OutputPipeline> pipeline = std::make_shared<OutputPipeline>(VulkanContext::getDevice());
     std::shared_ptr<GBufferPipeline> gPipeline = std::make_shared<GBufferPipeline>(VulkanContext::getDevice(), renderData);
