@@ -16,10 +16,9 @@ uint32_t DevicePickerConsole::pickDevice(const char **availableDevice, uint32_t 
         EngineLogger::getLoggerInstance()->logMessage(pickTitle);
         auto pickSTitle = std::make_shared<EngineLogMessage>("MEEngineDevicePicker", "", "", "ID\tName", false);
         for (uint32_t i = 0; i < deviceCount; i++) {
-            std::stringstream ss;
+            std::ostringstream ss;
             ss << i << "\t" << availableDevice[i];
-            std::string message;
-            ss >> message;
+            std::string message = ss.str();
             auto deviceEntry = std::make_shared<EngineLogMessage>("", "", "", message.c_str(), false);
             EngineLogger::getLoggerInstance()->logMessage(deviceEntry);
             i++;
