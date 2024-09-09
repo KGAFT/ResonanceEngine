@@ -1,0 +1,1 @@
+Sun Sep  8 20:35:53 2024  MEEngineDevicePicker []  Picked device: AMD Radeon RX 6700 XT (RADV NAVI22)
