@@ -6,7 +6,7 @@
 
 void GBufferPipeline::populateBuilder(std::shared_ptr<RenderPipelineBuilder> builder) {
 	dataManager->presetBuilder(builder, vk::ShaderStageFlagBits::eFragment);
-	builder->addUniformBuffer({ 2, sizeof(WorldTransformData), 1, vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment });
+    builder->addPushConstantInfo({vk::ShaderStageFlagBits::eVertex|vk::ShaderStageFlagBits::eFragment, sizeof(WorldTransformData)});
 	builder->addVertexInput({ 0, 3, sizeof(float), vk::Format::eR32G32B32Sfloat });
 	builder->addVertexInput({ 1, 3, sizeof(float), vk::Format::eR32G32B32Sfloat });
 	builder->addVertexInput({ 2, 2, sizeof(float), vk::Format::eR32G32Sfloat });
@@ -24,7 +24,8 @@ std::shared_ptr<std::vector<ShaderCreateInfo>> GBufferPipeline::getShadersInfos(
 void GBufferPipeline::render(vk::CommandBuffer cmd, uint32_t currentImage, std::shared_ptr<Mesh> mesh,
 	std::shared_ptr<IndirectBuffer> indirectBuffer, size_t indirectOffset) {
 	data.worldMatrix = mesh->calculateWorldMatrix();
-	memcpy(uniformBuffer->getMapPoint(), &data, sizeof(WorldTransformData));
+    pushConstant->writeData(&data, sizeof(WorldTransformData));
+    pushConstant->bind(cmd, vk::ShaderStageFlagBits::eVertex|vk::ShaderStageFlagBits::eFragment);
 	cmd.drawIndexedIndirect(indirectBuffer->getBuffer(), mesh->getIndirectOffset(), 1, (uint32_t)indirectBuffer->getSizeOfStructure());
 }
 
@@ -73,16 +74,9 @@ void GBufferPipeline::bindBatchData(vk::CommandBuffer cmd, uint32_t currentImage
 
 void GBufferPipeline::setupGlobalDescriptor(std::shared_ptr<RenderObjectsDataManager> dataManager) {
 	renderData = descriptorPool->allocateDescriptorSet(framesInFlight, renderPipeline->getGraphicsPipeline()->getDescriptorLayout());
-	uniformBuffer = std::make_shared<UniformBuffer>(device, sizeof(WorldTransformData));
+    pushConstant = std::make_shared<PushConstant>(sizeof(WorldTransformData), renderPipeline->getGraphicsPipeline()->getPipelineLayout());
 	dataManager->writeImagesInfos(renderData);
 	dataManager->writeMaterialsInfos(renderData);
-	DescriptorBufferInfo bufferInfo{};
-	bufferInfo.base.push_back({ uniformBuffer->getBuffer(), 0, sizeof(WorldTransformData) });
-	bufferInfo.binding = 2;
-	bufferInfo.descriptorType = vk::DescriptorType::eUniformBuffer;
-	renderData->addBufferInfo(bufferInfo);
-
-	memcpy(uniformBuffer->getMapPoint(), &data, sizeof(WorldTransformData));
 	renderData->updateDescriptors();
 	renderData->clearObjectsInfos();
 }
@@ -92,8 +86,7 @@ std::shared_ptr<GraphicsRenderPipeline> GBufferPipeline::getRenderPipeline() con
 }
 
 void GBufferPipeline::setCameraMatrix(glm::mat4 cameraMatrix, glm::vec3 camPos) {
-	data.worldMatrix = cameraMatrix;
-	data.cameraPosition = camPos;
+    data.viewMatrix = cameraMatrix;
 }
 
 
@@ -107,7 +100,6 @@ bool GBufferPipeline::processMeshes() {
 
 
 void GBufferPipeline::destroy() {
-	uniformBuffer->destroy();
-	
+    pushConstant->destroy();
 	renderPipeline->destroy();
 }

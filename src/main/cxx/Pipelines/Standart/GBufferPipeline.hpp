@@ -5,6 +5,7 @@
 #ifndef GBUFFERPIPELINE_HPP
 #define GBUFFERPIPELINE_HPP
 
+
 #include "Pipelines/IPipelineGraphics.hxx"
 #include <VulkanLib/Device/Buffer/PushConstant.hpp>
 #include <RenderData/DescriptorSetData.hpp>
@@ -12,8 +13,9 @@
 struct WorldTransformData {
     glm::mat4 viewMatrix;
     glm::mat4 worldMatrix;
-    glm::vec3 cameraPosition;
 };
+
+
 
 class GBufferPipeline : public IPipelineGraphics, public IResizeCallback{
 public:
@@ -27,7 +29,6 @@ private:
     std::shared_ptr<PushConstant> pushConstant;
     std::pair<std::shared_ptr<IndexBuffer>, std::shared_ptr<VertexBuffer>> quadMesh;
     std::shared_ptr<DescriptorSet> renderData;
-    std::shared_ptr<UniformBuffer> uniformBuffer;
     std::shared_ptr<RenderObjectsDataManager> dataManager;
     WorldTransformData data;
 public:

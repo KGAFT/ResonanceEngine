@@ -12,10 +12,9 @@ layout(location = 1) out vec3 readyNormals;
 layout(location = 2) out vec2 readyTextureCoordinates;
 layout(location = 3) out float rMaterialIndex;
 
-layout(std430, binding = 2, set = 0) uniform WorldTransformData{
+layout(push_constant) uniform WorldTransformData{
     mat4 viewMatrix;
     mat4 worldMatrix;
-    vec3 cameraPosition;
 } worldTransformData;
 
 vec2 fixVectorPositioning(vec2 base){

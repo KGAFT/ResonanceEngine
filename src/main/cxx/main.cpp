@@ -26,7 +26,7 @@ int main() {
     DeviceBuilder builder;
     builder.requestGraphicsSupport();
     //builder.requestRayTracingSupport();
-    builder.requestPresentSupport(window->getWindowSurface(VulkanContext::getVulkanInstance().getInstance()));
+    builder.requestPresentSupport(window->getWindowSurface(VulkanContext::getVulkanInstance(false).getInstance()));
     auto devices = VulkanContext::enumerateSupportedDevices(
         builder, window->getWindowSurface(VulkanContext::getVulkanInstance().getInstance()), &deviceCount);
 

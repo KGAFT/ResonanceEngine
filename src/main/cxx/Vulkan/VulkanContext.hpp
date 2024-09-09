@@ -14,7 +14,7 @@
 
 class VulkanContext {
 public:
-    static Instance& getVulkanInstance();
+    static Instance& getVulkanInstance(bool enableGc = false);
     static const char** enumerateSupportedDevices(DeviceBuilder& deviceBuilder, VkSurfaceKHR surfaceKhr, uint32_t* pDeviceCount);
     static void pickDevice(DeviceBuilder& deviceBuilder, uint32_t deviceIndex, VkSurfaceKHR surfaceKhr, uint32_t startWidth, uint32_t startHeight);
     static std::shared_ptr<LogicalDevice> getDevice();

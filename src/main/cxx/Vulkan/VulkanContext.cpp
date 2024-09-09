@@ -5,10 +5,10 @@
 
 //#include "Verbose/EngineLogger.hxx"
 
-Instance &VulkanContext::getVulkanInstance() {
+Instance &VulkanContext::getVulkanInstance(bool enableGc) {
     if (!apiInitialized) {
         InstanceBuilder instanceBuilder;
-
+        instanceBuilder.enableGarbageCollector(enableGc);
         std::vector<const char*> extensions;
         Window::getRequiredExtensions(extensions);
 

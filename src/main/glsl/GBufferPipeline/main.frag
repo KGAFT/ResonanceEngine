@@ -12,10 +12,9 @@ layout(location = 2) out vec4 readyNormal;
 layout(location = 3) out vec4 readyMetallicRoughnessAoEmissive;
 
 
-layout(std430, binding = 2, set = 0) uniform WorldTransformData{
+layout(push_constant) uniform WorldTransformData{
     mat4 viewMatrix;
     mat4 worldMatrix;
-    vec3 cameraPosition;
 } worldTransformData;
 
 #include "ShaderBase.glsl"
@@ -26,10 +25,10 @@ vec3 parseNormals();
 vec2 parseAoEmissive(vec3 albedo);
 
 void main(){
-    readyPos = vec4(1,1,1, 1.0f);
-    readyAlbedo = vec4(1,1,1,1.0f);
+    readyPos = vec4(position, 1.0f);
+    readyAlbedo = parseAlbedo();
     readyNormal = vec4(parseNormals(), 1.0f);
-   vec2 metallicRoughness = parseMetallicRoughness();
+    vec2 metallicRoughness = parseMetallicRoughness();
     vec2 aoEmissive = parseAoEmissive(readyAlbedo.rgb);
     readyMetallicRoughnessAoEmissive = vec4(metallicRoughness, aoEmissive.r, aoEmissive.g);
 }
