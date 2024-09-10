@@ -1,10 +1,12 @@
-#include "Window.hxx"
+
+#ifdef SDLWindowUsed
 #include <SDL3/SDL_error.h>
 #include <SDL3/SDL_video.h>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_vulkan.h>
 #include <iostream>
 #include <stdexcept>
+#include "Window.hxx"
 
 bool sdlInitialized = false;
 
@@ -362,3 +364,342 @@ void Window::sizeCallbacks() {
         el->resized(width, height);
     }
 }
+#endif
+
+#ifdef GLFWWindowUsed
+#include <iostream>
+#include <vulkan/vulkan.hpp>
+#include "Window.hxx"
+
+bool glfwInitial = false;
+
+std::vector<Window *> windowInstances = std::vector<Window *>();
+
+void resized(GLFWwindow *window, int width, int height) {
+    for (auto &el: windowInstances) {
+        if (el->getWindowHandle() == window) {
+            el->setSize(width, height);
+        }
+    }
+}
+
+void Window::getRequiredExtensions(std::vector<const char*>& extOutput) {
+    if(!glfwInitial) {
+        glfwInit();
+        glfwInitial = true;
+    }
+    uint32_t count = 0;
+    auto exts = glfwGetRequiredInstanceExtensions(&count);
+
+    for(uint32_t i = 0 ; i < count; i++) {
+        extOutput.push_back(exts[i]);
+    }
+}
+
+Window *Window::createWindow(uint32_t width, uint32_t height, const char *title
+) {
+    if(!glfwInitial) {
+        glfwInit();
+        glfwInitial = true;
+    }
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+    GLFWwindow *window = glfwCreateWindow(width, height, title, nullptr, nullptr);
+    if (window) {
+        Window *res = new Window(
+            window, width, height, title);
+        glfwSetWindowSizeCallback(window, resized);
+
+
+        windowInstances.push_back(res);
+        return res;
+    }
+    const char* desc = nullptr;
+    glfwGetError(&desc);
+    std::cerr<<desc<<std::endl;
+    throw std::runtime_error("Failed to create window");
+}
+
+
+WindowInputSystem &Window::getInputSystem() { return inputSystem; }
+
+
+void Window::preRenderEvents() {
+    inputSystem.checkMovementCallbacks();
+    inputSystem.checkKeyCallback();
+}
+
+void Window::postRenderEvents() {
+
+    pollEvents();
+    if (refreshInfo) {
+        calculateRefreshData();
+    }
+}
+
+void Window::sizeCallbacks() {
+    for (auto &el: resizeCallbacks) {
+        el->resized(width, height);
+    }
+}
+
+bool Window::needToClose() { return glfwWindowShouldClose((GLFWwindow*)windowHandle); }
+
+VkSurfaceKHR Window::getWindowSurface(vk::Instance instance) {
+    if (surface == VK_NULL_HANDLE) {
+        glfwCreateWindowSurface(instance, (GLFWwindow*)windowHandle, nullptr, &surface);
+        if(!surface) {
+            const char* desc = nullptr;
+            glfwGetError(&desc);
+            std::cerr<<desc<<std::endl;
+            throw std::runtime_error("Failed to create surface");
+        }
+    }
+    return surface;
+}
+
+void *Window::getWindowHandle() { return windowHandle; }
+
+
+
+uint32_t Window::getWidth() const { return width; }
+
+uint32_t Window::getHeight() const { return height; }
+
+void Window::setSize(uint32_t width, uint32_t height) {
+
+    this->width = width;
+    this->height = height;
+    glfwSetWindowSize((GLFWwindow*)windowHandle, width, height);
+}
+
+void Window::setTitle(const char *title) {
+    this->title = title;
+    glfwSetWindowTitle((GLFWwindow*)windowHandle, title);
+}
+
+const char *Window::getTitle() { return title; }
+
+void Window::addResizeCallback(IResizeCallback *resizeCallback) {
+    resizeCallbacks.push_back(resizeCallback);
+}
+
+void Window::removeResizeCallback(IResizeCallback *resizeCallback) {
+    int removeIndex = -1;
+    for (uint32_t i = 0; i < resizeCallbacks.size(); i++) {
+        if (resizeCallbacks[i] == resizeCallback) {
+            removeIndex = i;
+        }
+    }
+
+    if (removeIndex != -1) {
+        resizeCallbacks.erase(resizeCallbacks.begin() + removeIndex);
+    }
+}
+
+void Window::enableRefreshRateInfo() {
+    refreshInfo = true;
+}
+
+void Window::calculateRefreshData() {
+    double crntTime = glfwGetTime();
+    double timeDiff = crntTime - prevTime;
+    counter++;
+
+    if (timeDiff >= 1.0 / 30.0) {
+        std::string FPS = std::to_string((int) ((1.0 / timeDiff) * counter));
+        std::string ms = std::to_string((timeDiff / counter) * 1000);
+        glfwSetWindowTitle((GLFWwindow*)windowHandle, (std::string(title) + " FPS: " + FPS + " ms: " + ms).c_str());
+
+        prevTime = crntTime;
+        counter = 0;
+    }
+}
+
+void Window::disableRefreshInfo() {
+    refreshInfo = false;
+}
+
+void Window::destroy() {
+    destroyed = true;
+    glfwDestroyWindow((GLFWwindow*)windowHandle);
+}
+void Window::addContinuousResizeCallback(
+    IWindowOnResizeProcessStarted *callback) {
+}
+void Window::continuousResizeEvent(uint32_t width, uint32_t height) {
+}
+void Window::pollEvents() {
+    glfwPollEvents();
+}
+
+WindowInputSystem::WindowInputSystem(Window *window) : oldMousePosition(0), curMousePos(0), window(window) {
+}
+
+
+void WindowInputSystem::registerKeyCallback(IWindowKeyCallback *callback) {
+    unsigned int keyCount = 0;
+    WindowKey *cbKeys;
+    keyCount = callback->getKeys(&cbKeys);
+    time_t curTime;
+    time(&curTime);
+    for (unsigned int i = 0; i < keyCount; i++) {
+        if (!isKeyExist(cbKeys[i].scanCode)) {
+            InternalKey *key = new InternalKey;
+            key->lastActiveTime = curTime;
+            key->status = GLFW_RELEASE;
+            key->scanCode = cbKeys[i].scanCode;
+            key->isMouse =
+                    cbKeys[i].scanCode >= 0 && cbKeys[i].scanCode <= 7;
+            this->keys.push_back(key);
+        }
+    }
+    this->keyCallbacks.push_back(callback);
+}
+
+void WindowInputSystem::registerMouseCallback(
+        IWindowMouseMovementCallback *callback) {
+    mouseCallbacks.push_back(callback);
+}
+
+void WindowInputSystem::setMode(WindowInputMode mode) {
+    currentMode = mode;
+    switch(currentMode){
+        case WindowInputMode::MODE_FREE_CURSOR:
+            glfwSetInputMode((GLFWwindow*)window->getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            break;
+        case WindowInputMode::MODE_RETURN_INTO_CENTER:
+            glfwSetInputMode((GLFWwindow*)window->getWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+            break;
+        default:
+            break;
+    }
+}
+
+WindowInputSystem::~WindowInputSystem() {
+    for (auto &el: keys) {
+        delete el;
+    }
+}
+
+void WindowInputSystem::checkKeyCallback() {
+
+    for (IWindowKeyCallback *el: keyCallbacks) {
+        processKeyCallback(el);
+    }
+}
+
+void WindowInputSystem::checkMovementCallbacks() {
+    double mousePosX, mousePosY = 0;
+    glfwGetCursorPos((GLFWwindow*)window->getWindowHandle(), &mousePosX, &mousePosY);
+    glm::vec2 curMousePos(mousePosX, mousePosY);
+    if (curMousePos != oldMousePosition) {
+        for (auto &el: mouseCallbacks) {
+            if (el->getRequireWorkMode() == MODE_BOTH_MODES ||
+                el->getRequireWorkMode() == currentMode) {
+                el->moved(oldMousePosition, curMousePos);
+            }
+        }
+    }
+    if (currentMode == MODE_RETURN_INTO_CENTER) {
+        int width, height = 0;
+        glfwGetWindowSize((GLFWwindow*)window->getWindowHandle(), &width, &height);
+        if((mousePosX>=width-30 || mousePosY>=height-30) || (mousePosX<=30 || mousePosY<=30)){
+            glfwSetCursorPos((GLFWwindow*)window->getWindowHandle(), width / 2, height / 2);
+            curMousePos = glm::vec2(width / 2, height / 2);
+        }
+    }
+    oldMousePosition = curMousePos;
+}
+
+void WindowInputSystem::processKeyCallback(IWindowKeyCallback *callback) {
+    unsigned int keyCount = 0;
+    WindowKey *cbKeys;
+    keyCount = callback->getKeys(&cbKeys);
+    InternalKey *key;
+    for (unsigned int i = 0; i < keyCount; i++) {
+        getKeyFromArray(cbKeys[i].scanCode, &key);
+        int curStatus = key->isMouse
+                        ? glfwGetMouseButton((GLFWwindow*)window->getWindowHandle(), key->scanCode)
+                        : glfwGetKey((GLFWwindow*)window->getWindowHandle(), key->scanCode);
+        time_t curTime;
+        time(&curTime);
+        switch (cbKeys[i].action) {
+            case KEY_PRESSED:
+                if (curStatus == GLFW_PRESS) {
+                    callback->keyPressed(&cbKeys[i]);
+                }
+                break;
+            case KEY_CLICKED:
+                if (key->status == GLFW_RELEASE && curStatus == GLFW_PRESS) {
+                    callback->keyPressed(&cbKeys[i]);
+                }
+                break;
+            case KEY_HOLD:
+                if (key->status == GLFW_PRESS && curStatus == GLFW_PRESS &&
+                    ((time_t) callback->getHoldDelay()) <= (curTime - key->lastActiveTime) * 1000) {
+                    callback->keyPressed(&cbKeys[i]);
+                }
+                key->lastActiveTime = curTime;
+                break;
+            case KEY_RELEASED:
+                if (key->status == GLFW_PRESS && curStatus == GLFW_RELEASE) {
+                    callback->keyPressed(&cbKeys[i]);
+                }
+                break;
+        }
+        key->status = curStatus;
+        key->lastActiveTime =
+                cbKeys[i].action == KEY_HOLD ? key->lastActiveTime : curTime;
+    }
+}
+
+WindowInputMode WindowInputSystem::getMode() { return currentMode; }
+
+bool WindowInputSystem::isKeyExist(int scanCode) {
+    for (auto el: keys) {
+        if (el->scanCode == scanCode) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void WindowInputSystem::getKeyFromArray(uint32_t scanCode, InternalKey **pOutput) {
+    for (auto el: keys) {
+        if (el->scanCode == scanCode) {
+            *pOutput = el;
+            break;
+        }
+    }
+}
+
+void WindowInputSystem::removeKeyCallback(IWindowKeyCallback *callback) {
+    int i = -1;
+    for (unsigned int g = 0; g < keyCallbacks.size(); i++) {
+        if (keyCallbacks[g] == callback) {
+            i = g;
+            break;
+        }
+    }
+    if (i != -1) {
+        keyCallbacks.erase(keyCallbacks.begin() + i);
+    }
+}
+
+void WindowInputSystem::removeMouseCallback(
+        IWindowMouseMovementCallback *callback) {
+    int i = -1;
+    for (unsigned int g = 0; g < mouseCallbacks.size(); i++) {
+        if (mouseCallbacks[g] == callback) {
+            i = g;
+            break;
+        }
+    }
+    if (i != -1) {
+        mouseCallbacks.erase(mouseCallbacks.begin() + i);
+    }
+}
+
+#endif

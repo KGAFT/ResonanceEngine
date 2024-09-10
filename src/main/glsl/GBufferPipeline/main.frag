@@ -40,7 +40,7 @@ vec4 parseAlbedo(){
         res = texture(textures[material.albedoIndex], textureCoordinates);
     }
     if(material.opacityMapIndex!=-1){
-       // res.a = 1.0-texture(textures[material.opacityMapIndex], textureCoordinates).a;
+        res.a = texture(textures[material.opacityMapIndex], textureCoordinates).a;
     }
     return res;
 }

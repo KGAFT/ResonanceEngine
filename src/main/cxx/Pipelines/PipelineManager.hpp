@@ -47,12 +47,12 @@ public:
         uint32_t curCmd;
         auto cmd = VulkanContext::getSyncManager()->beginRender(curCmd);
         for (auto gPipeline : graphicsPipelines) {
-            gPipeline->beginRender(cmd, curCmd);
-            gPipeline->bindBatchData(cmd, curCmd, renderObjects);
+            gPipeline->beginRender(cmd, 0);
+            gPipeline->bindBatchData(cmd, 0, renderObjects);
             for (auto mesh : model->getMeshes()) {
-                gPipeline->render(cmd, curCmd, mesh, renderObjects->getIndirectBuffer(), mesh->getIndirectOffset());
+                gPipeline->render(cmd, 0, mesh, renderObjects->getIndirectBuffer(), mesh->getIndirectOffset());
             }
-            gPipeline->endRender(cmd, curCmd);
+            gPipeline->endRender(cmd, 0);
         }
         presentationPipeline->beginRender(cmd, curCmd);
         presentationPipeline->render(cmd, curCmd);
@@ -90,19 +90,19 @@ private:
                                                                vk::Extent2D{
                                                                        static_cast<uint32_t>(resolution.x),
                                                                        static_cast<uint32_t>(resolution.y)},
-                                                               VulkanContext::getMaxFramesInFlight());
+                                                              1);
             } else {
                 res = std::make_shared<GraphicsRenderPipeline>(VulkanContext::getVulkanInstance(), VulkanContext::getDevice(), VulkanContext::getSwapChain(), builder.get(),
                                                                shader,
                                                                vk::Extent2D{
                                                                        static_cast<uint32_t>(resolution.x),
                                                                        static_cast<uint32_t>(resolution.y)},
-                                                               VulkanContext::getMaxFramesInFlight());
+                                                                VulkanContext::getMaxFramesInFlight());
             }
 
             pipeline->setRenderPipeline(res);
             pipeline->setDescriptorPool(VulkanContext::getDescriptorPool());
-            pipeline->setMaxFramesInFlight(VulkanContext::getMaxFramesInFlight());
+            pipeline->setMaxFramesInFlight(pipeline->attachToSwapChain()?VulkanContext::getMaxFramesInFlight():1);
             pipeline->setup();
         } catch (std::exception &exception) {
             std::cerr << exception.what() << std::endl;

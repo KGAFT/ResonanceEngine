@@ -1,8 +1,16 @@
 #ifndef MENGINE_SDLWINDOW_HPP
 #define MENGINE_SDLWINDOW_HPP
 
+
+#ifdef SDLWindowUsed
 #include <SDL3/SDL.h>
 #define WINDOW_KEY(x) SDL_SCANCODE_##x
+#endif
+
+#ifdef GLFWWindowUsed
+#include <GLFW/glfw3.h>
+#define WINDOW_KEY(x) GLFW_KEY_##x
+#endif
 
 
 #include "VulkanLib/MemoryUtils/IDestroyableObject.hpp"

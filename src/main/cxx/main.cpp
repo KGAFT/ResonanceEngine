@@ -16,8 +16,8 @@
 #include "Camera/CameraManager.hxx"
 
 int main() {
-    auto window = Window::createWindow(1280, 720, "Hello world");
-    SettingsManager::getInstance()->storeData<RESOLUTION_INFO_T>(RESOLUTION_INFO, glm::vec2(1280, 720));
+    auto window = Window::createWindow(1920, 1080, "Hello world");
+    SettingsManager::getInstance()->storeData<RESOLUTION_INFO_T>(RESOLUTION_INFO, glm::vec2(1920, 1080));
     SettingsManager::getInstance()->storeData<RENDER_SCALE_INFO_T>(RENDER_SCALE_INFO, 1.0f);
     window->addResizeCallback(new SettingsResizeCallback(SettingsManager::getInstance()));
     auto logger = EngineLogger::getLoggerInstance();
@@ -48,11 +48,10 @@ int main() {
     PipelineManager pipelineManager;
     pipelineManager.addGraphicsPipeline(gPipeline);
     for(uint32_t i = 0; i < VulkanContext::getMaxFramesInFlight(); i++) {
+        pipeline->addAttachment(gPipeline->getRenderPipeline()->getBaseRenderImages()[3]->getImageViews()[0]);
+        pipeline->addAttachment(gPipeline->getRenderPipeline()->getBaseRenderImages()[3]->getImageViews()[0]);
+        pipeline->addAttachment(gPipeline->getRenderPipeline()->getBaseRenderImages()[3]->getImageViews()[0]);
 
-        pipeline->setMaxFramesInFlight(VulkanContext::getMaxFramesInFlight());
-        pipeline->addAttachment(gPipeline->getRenderPipeline()->getBaseRenderImages()[4*i+0]->getImageViews()[0]);
-        pipeline->addAttachment(gPipeline->getRenderPipeline()->getBaseRenderImages()[4*i+1]->getImageViews()[0]);
-        pipeline->addAttachment(gPipeline->getRenderPipeline()->getBaseRenderImages()[4*i+2]->getImageViews()[0]);
 
     }
     gPipeline->setupGlobalDescriptor(renderData);
