@@ -10,7 +10,7 @@ layout(location = 3) in float materialIndex;
 layout(location = 0) out vec3 readyPosition;
 layout(location = 1) out vec3 readyNormals;
 layout(location = 2) out vec2 readyTextureCoordinates;
-layout(location = 3) out float rMaterialIndex;
+layout(location = 3) flat out int rMaterialIndex;
 
 layout(push_constant) uniform WorldTransformData{
     mat4 viewMatrix;
@@ -36,5 +36,6 @@ void main(){
     readyPosition = (worldTransformData.worldMatrix*vec4(position, 1.0)).rgb;
     readyNormals = (vec4(normals, 0.0f)*worldTransformData.worldMatrix).xyz;
     readyTextureCoordinates = textureCoordinates;
+    rMaterialIndex = int(materialIndex);
     gl_Position = fixVectorPositioning(worldTransformData.viewMatrix*worldTransformData.worldMatrix*vec4(position, 1.0));
 }

@@ -4,7 +4,7 @@
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normals;
 layout(location = 2) in vec2 textureCoordinates;
-layout(location = 3) in float materialIndex;
+layout(location = 3) flat in int materialIndex;
 
 layout(location = 0) out vec4 readyPos;
 layout(location = 1) out vec4 readyAlbedo;
@@ -35,19 +35,19 @@ void main(){
 
 vec4 parseAlbedo(){
     vec4 res = vec4(1,1,1,1);
-    Material material = materialBuffer.materials[int(materialIndex)];
+    Material material = materialBuffer.materials[materialIndex];
     if(material.albedoIndex!=-1){
         res = texture(textures[material.albedoIndex], textureCoordinates);
     }
     if(material.opacityMapIndex!=-1){
-        res.a = texture(textures[material.opacityMapIndex], textureCoordinates).r;
+       // res.a = 1.0-texture(textures[material.opacityMapIndex], textureCoordinates).a;
     }
     return res;
 }
 
 vec2 parseMetallicRoughness(){
     vec2 res = vec2(0);
-    Material material = materialBuffer.materials[int(materialIndex)];
+    Material material = materialBuffer.materials[materialIndex];
     if(material.metallicMapIndex!=-1 || material.roughnessMapIndex!=-1){
         vec2 parsedMetallicRoughness = vec2(0);
         if(material.metallicMapIndex==material.roughnessMapIndex){
@@ -64,7 +64,7 @@ vec2 parseMetallicRoughness(){
 
 vec3 getNormalFromMap(vec2 uvsCoords, vec3 normals, vec3 fragmentPosition)
 {
-    int normalIndex = materialBuffer.materials[int(materialIndex)].normalMapIndex;
+    int normalIndex = materialBuffer.materials[materialIndex].normalMapIndex;
     if(normalIndex!=-1){
         vec4 baseNormal = texture(textures[normalIndex], uvsCoords);
         vec3 tangentNormal = baseNormal.xyz * 2.0 - 1.0;
@@ -96,11 +96,11 @@ float getEmissivePower(int emissiveIndex, vec2 UvsCoords, vec3 albedoColor){
 
 vec2 parseAoEmissive(vec3 albedo){
     vec2 res = vec2(0, 1);
-    int aoMapIndex = materialBuffer.materials[int(materialIndex)].aoMapIndex;
+    int aoMapIndex = materialBuffer.materials[materialIndex].aoMapIndex;
     if(aoMapIndex!=-1){
         res.r = texture(textures[aoMapIndex], textureCoordinates).r;
     }
-    int emissiveIndex = materialBuffer.materials[int(materialIndex)].emissiveMapIndex;
+    int emissiveIndex = materialBuffer.materials[materialIndex].emissiveMapIndex;
     if(emissiveIndex!=-1){
         res.g+=getEmissivePower(emissiveIndex, textureCoordinates, albedo);
     }

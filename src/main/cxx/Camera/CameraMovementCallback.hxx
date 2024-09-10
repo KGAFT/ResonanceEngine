@@ -10,7 +10,7 @@ public:
 private:
     std::vector<WindowKey> keys;
     Camera* camera = nullptr;
-    glm::vec3 sensitivity;
+    glm::vec3 sensitivity = glm::vec3(0.1,0.1,0.1);
     Window* window = nullptr;
 private:
     void loadKeys();
