@@ -17,7 +17,7 @@
 #include <cstdint>
 #include <glm/glm.hpp>
 #include <vector>
-#include <vulkan/vulkan.hpp>
+#include <vulkan/vulkan.h>
 
 #include "VulkanLib/Device/Synchronization/IResizeCallback.hpp"
 
@@ -150,7 +150,7 @@ private:
 public:
     bool needToClose();
 
-    VkSurfaceKHR getWindowSurface(vk::Instance instance);
+    VkSurfaceKHR getWindowSurface(VkInstance instance);
 
     void *getWindowHandle();
 

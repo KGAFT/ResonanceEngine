@@ -99,7 +99,7 @@ Window *Window::createWindow(uint32_t width, uint32_t height,
 
 bool Window::needToClose() { return isNeedToClose; }
 
-VkSurfaceKHR Window::getWindowSurface(vk::Instance instance) {
+VkSurfaceKHR Window::getWindowSurface(VkInstance instance) {
     if (surface==0) {
         SDL_Vulkan_CreateSurface((SDL_Window *) windowHandle, instance, nullptr,
                                       &surface);
