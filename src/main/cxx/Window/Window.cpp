@@ -446,7 +446,7 @@ void Window::sizeCallbacks() {
 
 bool Window::needToClose() { return glfwWindowShouldClose((GLFWwindow*)windowHandle); }
 
-VkSurfaceKHR Window::getWindowSurface(vk::Instance instance) {
+VkSurfaceKHR Window::getWindowSurface(VkInstance instance) {
     if (surface == VK_NULL_HANDLE) {
         glfwCreateWindowSurface(instance, (GLFWwindow*)windowHandle, nullptr, &surface);
         if(!surface) {

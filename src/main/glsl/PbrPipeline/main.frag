@@ -26,7 +26,7 @@ layout (std430, binding = 5, set = 0)  buffer PointLightsBuffer {
     PointLight lights[];
 }  pointLightsBuffer ;
 
-layout(std430, binding = 0) uniform LightConfiguration{
+layout(std430, binding = 6) uniform LightConfiguration{
     int enabledDirects;
     int enabledPoints;
 
@@ -34,6 +34,7 @@ layout(std430, binding = 0) uniform LightConfiguration{
     float emissiveShininess;
     float gammaCorrect;
     float ambientIntensity;
+    vec3 cameraPosition;
 } lightUbo;
 
 float distributeGGX(vec3 normals, vec3 halfWayVector, float roughness)

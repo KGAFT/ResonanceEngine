@@ -6,7 +6,9 @@
 #define DESCRIPTORSETDATA_HPP
 
 
+#include <cstdint>
 #include <memory>
+#include "VulkanLib/Device/Buffer/StorageBuffer.hpp"
 #include "VulkanLib/Device/Descriptors/DescriptorSet.hpp"
 #include "VulkanLib/Device/Buffer/UniformBuffer.hpp"
 #include "VulkanLib/Device/Image/Sampler.hpp"
@@ -27,6 +29,7 @@ private:
     std::shared_ptr<DescriptorSet> descriptorSet;
     std::vector<std::map<uint32_t, std::shared_ptr<UniformBuffer> > > uniformBuffers;
     std::vector<std::map<uint32_t, std::shared_ptr<SamplerDataInfo> > > samplers;
+    std::vector<std::map<uint32_t, std::shared_ptr<StorageBuffer>>> storageBuffers;
     uint32_t instanceCount = 1;
 
 public:
@@ -41,6 +44,10 @@ public:
 
     void createSampler(std::shared_ptr<LogicalDevice> device, uint32_t binding, uint32_t instance);
 
+    void setStorageBuffer(std::shared_ptr<StorageBuffer> storageBuffer, uint32_t binding, uint32_t instance);
+
+    void setStorageBuffer(std::shared_ptr<StorageBuffer> storageBuffer, uint32_t binding);
+    
     void confirmAndWriteDataToDescriptorSet() const;
 
     std::shared_ptr<SamplerDataInfo> getSamplerByBinding(uint32_t binding);
