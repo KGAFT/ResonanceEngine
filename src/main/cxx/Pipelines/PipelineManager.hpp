@@ -48,10 +48,15 @@ public:
         auto cmd = VulkanContext::getSyncManager()->beginRender(curCmd);
         for (auto gPipeline : graphicsPipelines) {
             gPipeline->beginRender(cmd, 0);
-            gPipeline->bindBatchData(cmd, 0, renderObjects);
-            for (auto mesh : model->getMeshes()) {
-                gPipeline->render(cmd, 0, mesh, renderObjects->getIndirectBuffer(), mesh->getIndirectOffset());
+            if(gPipeline->processMeshes()){
+                gPipeline->bindBatchData(cmd, 0, renderObjects);
+                for (auto mesh : model->getMeshes()) {
+                    gPipeline->render(cmd, 0, mesh, renderObjects->getIndirectBuffer(), mesh->getIndirectOffset());
+                }
+            } else {
+                gPipeline->render(cmd, 0);
             }
+            
             gPipeline->endRender(cmd, 0);
         }
         presentationPipeline->beginRender(cmd, curCmd);
@@ -99,10 +104,9 @@ private:
                                                                        static_cast<uint32_t>(resolution.y)},
                                                                 VulkanContext::getMaxFramesInFlight());
             }
-
+            pipeline->setMaxFramesInFlight(pipeline->attachToSwapChain()?VulkanContext::getMaxFramesInFlight():1);
             pipeline->setRenderPipeline(res);
             pipeline->setDescriptorPool(VulkanContext::getDescriptorPool());
-            pipeline->setMaxFramesInFlight(pipeline->attachToSwapChain()?VulkanContext::getMaxFramesInFlight():1);
             pipeline->setup();
         } catch (std::exception &exception) {
             std::cerr << exception.what() << std::endl;

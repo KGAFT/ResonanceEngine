@@ -22,7 +22,7 @@ struct SamplerDataInfo {
 
 class DescriptorSetData : public IDestroyableObject {
 public:
-    explicit DescriptorSetData(std::shared_ptr<DescriptorSet> &descriptorSet) : descriptorSet(descriptorSet) {
+    explicit DescriptorSetData(std::shared_ptr<DescriptorSet> descriptorSet) : descriptorSet(descriptorSet) {
     }
 
 private:

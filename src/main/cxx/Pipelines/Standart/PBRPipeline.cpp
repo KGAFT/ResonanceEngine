@@ -10,27 +10,28 @@
 
 PBRPipeline::PBRPipeline(const std::shared_ptr<LogicalDevice> &device, std::shared_ptr<GBufferPipeline> gbPipeline, uint32_t maxPointLighsAmount, uint32_t maxDirectLightBlocks) : 
 device(device), maxPointLighsAmount(maxPointLighsAmount), maxDirectLightBlocks(maxDirectLightBlocks), gbPipeline(gbPipeline){
-    pointLightsStorage = std::make_shared<StorageBuffer>(device, maxPointLighsAmount*sizeof(PointLight), 0);
-    directLightsStorage = std::make_shared<StorageBuffer>(device, maxDirectLightBlocks*sizeof(DirectLight), 0);
+    pointLightsStorage = std::make_shared<StorageBuffer>(device, maxPointLighsAmount*sizeof(PointLight), vk::BufferUsageFlags(0));
+    directLightsStorage = std::make_shared<StorageBuffer>(device, maxDirectLightBlocks*sizeof(DirectLight), vk::BufferUsageFlags(0));
     quadMesh = QuadMesh::getQuadMesh(device);
 }
 
 void PBRPipeline::populateBuilder(std::shared_ptr<RenderPipelineBuilder> builder)
 {
     builder->addVertexInput({0, 3, sizeof(float), vk::Format::eR32G32B32Sfloat});
-    builder->addVertexInput({0, 2, sizeof(float), vk::Format::eR32G32Sfloat});
+    builder->addVertexInput({1, 2, sizeof(float), vk::Format::eR32G32Sfloat});
     builder->addUniformBuffer({6, sizeof(LighConfig), 1, vk::ShaderStageFlagBits::eFragment});
     builder->addStorageBufferInfo({5, 1, vk::ShaderStageFlagBits::eFragment});
     builder->addStorageBufferInfo({4, 1, vk::ShaderStageFlagBits::eFragment});
     for(uint8_t i = 0; i<4; i++)
         builder->addSamplerInfo({i ,1, vk::ShaderStageFlagBits::eFragment});
+    builder->setAttachmentsPerStepAmount(1);
 }
 
 std::shared_ptr<std::vector<ShaderCreateInfo> > PBRPipeline::getShadersInfos()
 {
     auto res = std::make_shared<std::vector<ShaderCreateInfo>>(2);
-    (*res)[0] = { "shaders/PBRPipeline/main.vert", "main.vert", SRC_FILE, vk::ShaderStageFlagBits::eVertex };
-    (*res)[1] = { "shaders/PBRPipeline/main.frag", "main.frag", SRC_FILE, vk::ShaderStageFlagBits::eFragment };
+    (*res)[0] = { "shaders/PbrPipeline/main.vert", "main.vert", SRC_FILE, vk::ShaderStageFlagBits::eVertex };
+    (*res)[1] = { "shaders/PbrPipeline/main.frag", "main.frag", SRC_FILE, vk::ShaderStageFlagBits::eFragment };
     return res;
 }
 
@@ -51,6 +52,7 @@ void PBRPipeline::setDescriptorPool(std::shared_ptr<DescriptorPool> descriptorPo
 {
     PBRPipeline::descriptorPool = descriptorPool;
     descriptorSetData = std::make_shared<DescriptorSetData>(descriptorPool->allocateDescriptorSet(framesInFlight,renderPipeline->getGraphicsPipeline()->getDescriptorLayout()));
+    descriptorSetData->setInstanceCount(framesInFlight);
     for(uint8_t i = 0; i<4; i++)
         descriptorSetData->createSampler(device, i);
     descriptorSetData->createUniformBuffer(device, 6, sizeof(LighConfig));
@@ -82,7 +84,9 @@ void PBRPipeline::setup()
     for(uint8_t j = 0; j<framesInFlight; j++){
         for(uint8_t i = 0; i<4; i++){
             auto imageView = gbPipeline->getRenderPipeline()->getBaseRenderImages()[j*i]->getImageViews()[0];
-            descriptorSetData->getSamplerByBinding(i, j)->imageView = imageView->getBase();
+            auto sampler = descriptorSetData->getSamplerByBinding(i, j);
+            sampler->imageView = imageView->getBase();
+            sampler->layout = imageView->getParentInfo().initialLayout;
         }
     }
     descriptorSetData->confirmAndWriteDataToDescriptorSet();
