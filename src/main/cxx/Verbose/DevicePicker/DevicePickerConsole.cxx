@@ -8,7 +8,7 @@
 
 uint32_t DevicePickerConsole::pickDevice(const char **availableDevice, uint32_t deviceCount) {
     uint32_t result = 0;
-
+    /*
     if (deviceCount > 1) {
         auto pickTitle = std::make_shared<EngineLogMessage>("MEEngineDevicePicker", "", "",
                                                             "The system has found several graphics devices, choose one of them",
@@ -34,6 +34,7 @@ uint32_t DevicePickerConsole::pickDevice(const char **availableDevice, uint32_t 
         }
 
     }
+    */
     auto pickedDeviceMesage = std::make_shared<EngineLogMessage>("MEEngineDevicePicker", "", "",
                                                                  (std::string("Picked device: ")+availableDevice[result]).c_str(),
                                                                  false);

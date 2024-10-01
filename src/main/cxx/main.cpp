@@ -38,7 +38,7 @@ int main() {
                               window->getWidth(), window->getHeight());
 
     AssetImporter importer(VulkanContext::getDevice(), false);
-    auto model = importer.loadModel("assets/Sponza/glTF/Sponza.gltf");
+    auto model = importer.loadModel("assets/DamagedHelmet/glTF/DamagedHelmet.gltf");
     auto renderData = importer.makeBatchData();
     std::shared_ptr<OutputPipeline> pipeline = std::make_shared<OutputPipeline>(VulkanContext::getDevice());
     std::shared_ptr<GBufferPipeline> gPipeline = std::make_shared<GBufferPipeline>(VulkanContext::getDevice(), renderData);
@@ -49,29 +49,35 @@ int main() {
 
     PipelineManager pipelineManager;
     pipelineManager.addGraphicsPipeline(gPipeline);
+    pipelineManager.addGraphicsPipeline(pbrPipeline);
     for(uint32_t i = 0; i < VulkanContext::getMaxFramesInFlight(); i++) {
-        pipeline->addAttachment(gPipeline->getRenderPipeline()->getBaseRenderImages()[3]->getImageViews()[0]);
-        pipeline->addAttachment(gPipeline->getRenderPipeline()->getBaseRenderImages()[3]->getImageViews()[0]);
-        pipeline->addAttachment(gPipeline->getRenderPipeline()->getBaseRenderImages()[3]->getImageViews()[0]);
-
-
+        pipeline->addAttachment(pbrPipeline->getRenderPipeline()->getBaseRenderImages()[0]->getImageViews()[0]);
+        pipeline->addAttachment(pbrPipeline->getRenderPipeline()->getBaseRenderImages()[0]->getImageViews()[0]);
+        pipeline->addAttachment(pbrPipeline->getRenderPipeline()->getBaseRenderImages()[0]->getImageViews()[0]);
     }
     gPipeline->setupGlobalDescriptor(renderData);
     pipelineManager.setPresentationPipeline(pipeline);
-    
-    pipelineManager.addGraphicsPipeline(pbrPipeline);
     window->addResizeCallback(VulkanContext::getSyncManager().get());
     window->enableRefreshRateInfo();
     window->getInputSystem().registerKeyCallback(pipeline.get());
+    pbrPipeline->getLightConfiguration()->enabledPoints = 0;
+    pbrPipeline->getLightConfiguration()->enabledDirects = 1;
+    pbrPipeline->getLightConfiguration()->ambientIntensity = 200;
+    pbrPipeline->getDirectLightBlock(0)->direction = glm::vec3(0, 5, -5);
+    pbrPipeline->getDirectLightBlock(0)->color = glm::vec3(1);
+    pbrPipeline->getDirectLightBlock(0)->intensity = 200;
     CameraManager cameraManager(window);
-
+    cameraManager.getCurrentCamera()->getPosition(pbrPipeline->getLightConfiguration()->cameraPosition);
     while (!window->needToClose()) {
         window->preRenderEvents();
         glm::mat4 camMatrix = cameraManager.getCurrentCamera()->calculateCameraMatrix( 75, 0.05f, 2600000, (float)window->getWidth()/(float)window->getHeight());
         glm::vec3 camPos;
         cameraManager.getCurrentCamera()->getPosition(camPos);
+
         gPipeline->setCameraMatrix(camMatrix, camPos);
+        cameraManager.getCurrentCamera()->getPosition(pbrPipeline->getLightConfiguration()->cameraPosition);
         pipelineManager.draw(renderData, model);
+        
         window->postRenderEvents();
     }
     return 0;

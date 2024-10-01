@@ -68,6 +68,7 @@ public:
         auto scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
             std::cerr << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
+            throw std::runtime_error("Failed to load model");
             return std::shared_ptr<Model>();
         }
         directory = path.substr(0, path.find_last_of('/'));

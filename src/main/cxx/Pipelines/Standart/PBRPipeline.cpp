@@ -38,7 +38,7 @@ std::shared_ptr<std::vector<ShaderCreateInfo> > PBRPipeline::getShadersInfos()
 
 void PBRPipeline::render(vk::CommandBuffer cmd, uint32_t currentImage)
 {
-     quadMesh.second->bind(cmd);
+    quadMesh.second->bind(cmd);
     quadMesh.first->bind(cmd);
     quadMesh.first->drawAll(cmd);
 }
@@ -79,17 +79,31 @@ void PBRPipeline::setMaxFramesInFlight(uint32_t framesInFlight)
     PBRPipeline::framesInFlight = framesInFlight;
 }
 
+
+PointLight* PBRPipeline::getPointLightBlock(uint32_t index){
+    return &((PointLight*)pointLightsStorage->getMapPoint())[index];
+}
+    
+DirectLight* PBRPipeline::getDirectLightBlock(uint32_t index){
+    return &((DirectLight*)directLightsStorage->getMapPoint())[index];
+}
+
+LighConfig* PBRPipeline::getLightConfiguration(){
+    return (LighConfig*)descriptorSetData->getUniformBufferByBinding(6)->getMapPoint();
+}
+
 void PBRPipeline::setup()
 {
     for(uint8_t j = 0; j<framesInFlight; j++){
         for(uint8_t i = 0; i<4; i++){
-            auto imageView = gbPipeline->getRenderPipeline()->getBaseRenderImages()[j*i]->getImageViews()[0];
+            auto imageView = gbPipeline->getRenderPipeline()->getBaseRenderImages()[j*gbPipeline->getRenderPipeline()->getBaseRenderImages().size()/framesInFlight + i]->getImageViews()[0];
             auto sampler = descriptorSetData->getSamplerByBinding(i, j);
             sampler->imageView = imageView->getBase();
             sampler->layout = imageView->getParentInfo().initialLayout;
         }
     }
     descriptorSetData->confirmAndWriteDataToDescriptorSet();
+    ((LighConfig*)descriptorSetData->getUniformBufferByBinding(6)->getMapPoint())[0] = {};
 }
 
 void PBRPipeline::resized(uint32_t width, uint32_t height)

@@ -10,7 +10,7 @@ public:
     CameraRotationCallback(Camera* camera);
 private:
     Camera* camera;
-    glm::vec2 sensitivity = glm::vec2(20, 20);
+    glm::vec2 sensitivity = glm::vec2(40, 40);
 public:
   void setCamera(Camera* pCamera);
   void setSensitivity(glm::vec2 newSensitivity);

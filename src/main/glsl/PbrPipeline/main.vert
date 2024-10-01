@@ -24,5 +24,5 @@ vec4 fixVectorPositioning(vec4 base){
 
 void main(){
     ReadyUvs = uvs;
-    gl_Position = fixVectorPositioning(vec4(position, 1.0));
+    gl_Position = vec4(position, 1.0);
 }

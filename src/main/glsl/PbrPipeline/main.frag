@@ -172,11 +172,13 @@ void main(){
     for (int c = 0; c<lightUbo.enabledPoints; c++){
         Lo+=processPointLight(pointLightsBuffer.lights[c], processedNormals, fragmentPosition, worldViewVector,startFresnelSchlick, roughness, metallic, albedo);
     }
-    vec3 ambient = (vec3(lightUbo.ambientIntensity) * albedo * ao);
+
+    vec3 ambient = lightUbo.ambientIntensity * albedo * ao;
     vec3 color = ambient + Lo;
 
-    color+=(emissive*pow(1, lightUbo.emissiveShininess)*lightUbo.emissiveIntensity);
+    //vec3 color = vec3(lightUbo.ambientIntensity);
+   // color+=(emissive*pow(1, lightUbo.emissiveShininess)*lightUbo.emissiveIntensity);
     color = postProcessColor(color);
 
-    fragColor = vec4(color, opacity);
+    fragColor = vec4(ambient, opacity);
 }

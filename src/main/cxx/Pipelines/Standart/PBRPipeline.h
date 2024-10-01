@@ -3,6 +3,7 @@
 
 #include "Pipelines/Standart/GBufferPipeline.hpp"
 #include "VulkanLib/Device/Buffer/StorageBuffer.hpp"
+#include <cstdint>
 #include <memory>
 #define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
 #include <glm/glm.hpp>
@@ -25,13 +26,14 @@ struct DirectLight{
 };
 
 struct LighConfig{
-    int enabledDirects;
-    int enabledPoints;
+    int enabledDirects = 0;
+    int enabledPoints = 0;
 
-    float emissiveIntensity;
-    float emissiveShininess;
-    float gammaCorrect;
-    float ambientIntensity;
+
+    float emissiveIntensity = 2;
+    float emissiveShininess = 1;
+    float gammaCorrect = 1.0f / 2.2f;
+    float ambientIntensity = 0.003f;
     glm::vec3 cameraPosition;
 };
 
@@ -79,6 +81,12 @@ public:
     void render(vk::CommandBuffer cmd, uint32_t currentImage) override;
 
     void endRender(vk::CommandBuffer cmd, uint32_t currentImage) override;
+
+    PointLight* getPointLightBlock(uint32_t index);
+
+    DirectLight* getDirectLightBlock(uint32_t index);
+
+    LighConfig* getLightConfiguration();
 
     void bindBatchData(vk::CommandBuffer cmd, uint32_t currentImage, std::shared_ptr<RenderObjectsDataManager> batchData) override;
 

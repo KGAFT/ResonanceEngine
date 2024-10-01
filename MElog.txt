@@ -1,1 +1,54 @@
-Sun Sep  8 20:35:53 2024  MEEngineDevicePicker []  Picked device: AMD Radeon RX 6700 XT (RADV NAVI22)
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL linux_read_sorted_physical_devices:
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL      Original order:
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL            [0] NVIDIA GeForce RTX 4050 Laptop GPU
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL            [1] Intel(R) Graphics (ADL GT2)
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL      Sorted order:
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL            [0] NVIDIA GeForce RTX 4050 Laptop GPU  
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL            [1] Intel(R) Graphics (ADL GT2)  
+Tue Oct  1 16:44:35 2024  VULKAN [VERBOSE] GENERAL Copying old device 0 into new device 0
+Tue Oct  1 16:44:35 2024  VULKAN [VERBOSE] GENERAL Copying old device 1 into new device 1
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL linux_read_sorted_physical_devices:
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL      Original order:
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL            [0] NVIDIA GeForce RTX 4050 Laptop GPU
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL            [1] Intel(R) Graphics (ADL GT2)
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL      Sorted order:
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL            [0] NVIDIA GeForce RTX 4050 Laptop GPU  
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL            [1] Intel(R) Graphics (ADL GT2)  
+Tue Oct  1 16:44:35 2024  VULKAN [VERBOSE] GENERAL Copying old device 0 into new device 0
+Tue Oct  1 16:44:35 2024  VULKAN [VERBOSE] GENERAL Copying old device 1 into new device 1
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL linux_read_sorted_physical_devices:
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL      Original order:
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL            [0] NVIDIA GeForce RTX 4050 Laptop GPU
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL            [1] Intel(R) Graphics (ADL GT2)
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL      Sorted order:
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL            [0] NVIDIA GeForce RTX 4050 Laptop GPU  
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL            [1] Intel(R) Graphics (ADL GT2)  
+Tue Oct  1 16:44:35 2024  VULKAN [VERBOSE] GENERAL Copying old device 0 into new device 0
+Tue Oct  1 16:44:35 2024  VULKAN [VERBOSE] GENERAL Copying old device 1 into new device 1
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL linux_read_sorted_physical_devices:
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL      Original order:
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL            [0] NVIDIA GeForce RTX 4050 Laptop GPU
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL            [1] Intel(R) Graphics (ADL GT2)
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL      Sorted order:
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL            [0] NVIDIA GeForce RTX 4050 Laptop GPU  
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL            [1] Intel(R) Graphics (ADL GT2)  
+Tue Oct  1 16:44:35 2024  VULKAN [VERBOSE] GENERAL Copying old device 0 into new device 0
+Tue Oct  1 16:44:35 2024  VULKAN [VERBOSE] GENERAL Copying old device 1 into new device 1
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL Removing driver /usr/lib64/libvulkan_intel_hasvk.so due to not having any physical devices
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL Removing driver /usr/lib64/libvulkan_radeon.so due to not having any physical devices
+Tue Oct  1 16:44:35 2024  MEEngineDevicePicker []  Picked device: NVIDIA GeForce RTX 4050 Laptop GPU
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL Inserted device layer "VK_LAYER_KHRONOS_validation" (libVkLayer_khronos_validation.so)
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL Failed to find vkGetDeviceProcAddr in layer "libVkLayer_MESA_device_select.so"
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL vkCreateDevice layer callstack setup to:
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL    <Application>
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL      ||
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL    <Loader>
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL      ||
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL    VK_LAYER_KHRONOS_validation
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL            Type: Explicit
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL            Manifest: /opt/vulkan_sdk/1.3.290.0/x86_64/share/vulkan/explicit_layer.d/VkLayer_khronos_validation.json
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL            Library:  libVkLayer_khronos_validation.so
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL      ||
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL    <Device>
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] GENERAL        Using "NVIDIA GeForce RTX 4050 Laptop GPU" with driver: "libGLX_nvidia.so.0"
+Tue Oct  1 16:44:35 2024  VULKAN [INFO] VALIDATION Validation Information: [ WARNING-cache-file-error ] | MessageID = 0xb8515d13 | vkCreateDevice():  Cannot open shader validation cache at /home/kgaft/.cache/shader_validation_cache-1000.bin for reading (it may not exist yet)
