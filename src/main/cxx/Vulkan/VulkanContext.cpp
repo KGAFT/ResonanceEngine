@@ -77,3 +77,11 @@ const std::shared_ptr<DescriptorPool> &VulkanContext::getDescriptorPool() {
 const std::shared_ptr<SyncManager> &VulkanContext::getSyncManager() {
     return syncManager;
 }
+
+void VulkanContext::shutDown() {
+    syncManager->destroy();
+    swapChain->destroy();
+    descriptorPool->destroy();
+    device->destroy();
+    instance.destroy();
+}

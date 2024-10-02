@@ -1,6 +1,9 @@
 #version 460 core
 
-#define PI 3.141592653589793238462643383279502884197
+#extension GL_EXT_shader_explicit_arithmetic_types : require
+#extension GL_EXT_scalar_block_layout : require
+#extension GL_EXT_nonuniform_qualifier : require
+#define PI 3.1415926
 
 layout(location = 0) in vec2 uvs;
 layout(location = 0) out vec4 fragColor;
@@ -173,12 +176,10 @@ void main(){
         Lo+=processPointLight(pointLightsBuffer.lights[c], processedNormals, fragmentPosition, worldViewVector,startFresnelSchlick, roughness, metallic, albedo);
     }
 
-    vec3 ambient = lightUbo.ambientIntensity * albedo * ao;
+    vec3 ambient = (lightUbo.ambientIntensity* albedo) + emissive*pow(1, lightUbo.emissiveShininess)*lightUbo.emissiveIntensity;
     vec3 color = ambient + Lo;
 
-    //vec3 color = vec3(lightUbo.ambientIntensity);
-   // color+=(emissive*pow(1, lightUbo.emissiveShininess)*lightUbo.emissiveIntensity);
     color = postProcessColor(color);
 
-    fragColor = vec4(ambient, opacity);
+    fragColor = vec4(color, opacity);
 }

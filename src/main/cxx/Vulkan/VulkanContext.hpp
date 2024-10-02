@@ -25,7 +25,7 @@ public:
     static const std::shared_ptr<DescriptorPool> &getDescriptorPool();
 
     static const std::shared_ptr<SyncManager> &getSyncManager();
-
+    static void shutDown();
 private:
     static inline std::shared_ptr<LogicalDevice> device = std::shared_ptr<LogicalDevice>();
     static inline std::shared_ptr<SwapChain> swapChain = std::shared_ptr<SwapChain>();

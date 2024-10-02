@@ -17,7 +17,7 @@ struct WorldTransformData {
 
 
 
-class GBufferPipeline : public IPipelineGraphics, public IResizeCallback{
+class GBufferPipeline : public IPipelineGraphics{
 public:
     GBufferPipeline(const std::shared_ptr<LogicalDevice>& device, std::shared_ptr<RenderObjectsDataManager> dataManager) : device(device), dataManager(dataManager){}
 private:

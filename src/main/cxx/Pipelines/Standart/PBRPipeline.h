@@ -1,12 +1,14 @@
 #ifndef PBRPIPELINE_H
 #define PBRPIPELINE_H
 
+#define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
+#include <glm/glm.hpp>
+
 #include "Pipelines/Standart/GBufferPipeline.hpp"
 #include "VulkanLib/Device/Buffer/StorageBuffer.hpp"
 #include <cstdint>
 #include <memory>
-#define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
-#include <glm/glm.hpp>
+
 
 #include "Pipelines/IPipelineGraphics.hxx"
 #include <VulkanLib/Device/Buffer/PushConstant.hpp>
@@ -14,31 +16,31 @@
 
 
 struct PointLight{
-    glm::vec3 position;
-    glm::vec3 color;
-    float intensity;
+    alignas(16) glm::vec3 position;
+    alignas(16) glm::vec3 color;
+    alignas(4) float intensity;
 };
 
 struct DirectLight{
-    glm::vec3 direction;
-    glm::vec3 color;
-    float intensity;
+    alignas(16) glm::vec3 direction;
+   alignas(16)  glm::vec3 color;
+   alignas(4)  float intensity;
 };
 
 struct LighConfig{
-    int enabledDirects = 0;
-    int enabledPoints = 0;
+   alignas(4) int enabledDirects = 0;
+   alignas(4) int enabledPoints = 0;
 
 
-    float emissiveIntensity = 2;
-    float emissiveShininess = 1;
-    float gammaCorrect = 1.0f / 2.2f;
-    float ambientIntensity = 0.003f;
-    glm::vec3 cameraPosition;
+   alignas(4) float emissiveIntensity = 2;
+   alignas(4) float emissiveShininess = 1;
+   alignas(4) float gammaCorrect = 1.0f / 2.2f;
+   alignas(4) float ambientIntensity = 0.003f;
+    alignas(16) glm::vec3 cameraPosition;
 };
 
 
-class PBRPipeline: public IPipelineGraphics, public IResizeCallback{
+class PBRPipeline: public IPipelineGraphics{
 public:
     PBRPipeline(const std::shared_ptr<LogicalDevice>& device, std::shared_ptr<GBufferPipeline> gbPipeline, uint32_t maxPointLighsAmount, uint32_t maxDirectLightBlocks);
 private:

@@ -42,7 +42,7 @@ int main() {
     auto renderData = importer.makeBatchData();
     std::shared_ptr<OutputPipeline> pipeline = std::make_shared<OutputPipeline>(VulkanContext::getDevice());
     std::shared_ptr<GBufferPipeline> gPipeline = std::make_shared<GBufferPipeline>(VulkanContext::getDevice(), renderData);
-    auto pbrPipeline = std::make_shared<PBRPipeline>(VulkanContext::getDevice(), gPipeline, 5, 5);
+    auto pbrPipeline = std::make_shared<PBRPipeline>(VulkanContext::getDevice(), gPipeline, 128, 128);
 
 
     pipeline->setMaxFramesInFlight(VulkanContext::getMaxFramesInFlight());
@@ -60,12 +60,12 @@ int main() {
     window->addResizeCallback(VulkanContext::getSyncManager().get());
     window->enableRefreshRateInfo();
     window->getInputSystem().registerKeyCallback(pipeline.get());
-    pbrPipeline->getLightConfiguration()->enabledPoints = 0;
-    pbrPipeline->getLightConfiguration()->enabledDirects = 1;
-    pbrPipeline->getLightConfiguration()->ambientIntensity = 200;
-    pbrPipeline->getDirectLightBlock(0)->direction = glm::vec3(0, 5, -5);
-    pbrPipeline->getDirectLightBlock(0)->color = glm::vec3(1);
-    pbrPipeline->getDirectLightBlock(0)->intensity = 200;
+    pbrPipeline->getLightConfiguration()->enabledPoints = 1;
+    pbrPipeline->getLightConfiguration()->enabledDirects = 0;
+    pbrPipeline->getLightConfiguration()->ambientIntensity = 0.03;
+    pbrPipeline->getPointLightBlock(0)->position = glm::vec3(2, 3, 2);
+    pbrPipeline->getPointLightBlock(0)->color = glm::vec3(1,0,0);
+    pbrPipeline->getPointLightBlock(0)->intensity = 100;
     CameraManager cameraManager(window);
     cameraManager.getCurrentCamera()->getPosition(pbrPipeline->getLightConfiguration()->cameraPosition);
     while (!window->needToClose()) {
@@ -80,5 +80,9 @@ int main() {
         
         window->postRenderEvents();
     }
+    gPipeline->destroy();
+    pbrPipeline->destroy();
+    pipeline->destroy();
+    VulkanContext::shutDown();
     return 0;
 }

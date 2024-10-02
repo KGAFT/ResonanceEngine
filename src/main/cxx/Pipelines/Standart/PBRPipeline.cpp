@@ -10,8 +10,8 @@
 
 PBRPipeline::PBRPipeline(const std::shared_ptr<LogicalDevice> &device, std::shared_ptr<GBufferPipeline> gbPipeline, uint32_t maxPointLighsAmount, uint32_t maxDirectLightBlocks) : 
 device(device), maxPointLighsAmount(maxPointLighsAmount), maxDirectLightBlocks(maxDirectLightBlocks), gbPipeline(gbPipeline){
-    pointLightsStorage = std::make_shared<StorageBuffer>(device, maxPointLighsAmount*sizeof(PointLight), vk::BufferUsageFlags(0));
-    directLightsStorage = std::make_shared<StorageBuffer>(device, maxDirectLightBlocks*sizeof(DirectLight), vk::BufferUsageFlags(0));
+    pointLightsStorage = std::make_shared<StorageBuffer>(device, maxPointLighsAmount*sizeof(PointLight), vk::BufferUsageFlags());
+    directLightsStorage = std::make_shared<StorageBuffer>(device, maxDirectLightBlocks*sizeof(DirectLight), vk::BufferUsageFlags());
     quadMesh = QuadMesh::getQuadMesh(device);
 }
 
@@ -81,11 +81,11 @@ void PBRPipeline::setMaxFramesInFlight(uint32_t framesInFlight)
 
 
 PointLight* PBRPipeline::getPointLightBlock(uint32_t index){
-    return &((PointLight*)pointLightsStorage->getMapPoint())[index];
+    return &(((PointLight*)pointLightsStorage->getMapPoint())[index]);
 }
     
 DirectLight* PBRPipeline::getDirectLightBlock(uint32_t index){
-    return &((DirectLight*)directLightsStorage->getMapPoint())[index];
+    return &(((DirectLight*)directLightsStorage->getMapPoint())[index]);
 }
 
 LighConfig* PBRPipeline::getLightConfiguration(){
