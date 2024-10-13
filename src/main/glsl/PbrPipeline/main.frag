@@ -3,7 +3,7 @@
 #extension GL_EXT_shader_explicit_arithmetic_types : require
 #extension GL_EXT_scalar_block_layout : require
 #extension GL_EXT_nonuniform_qualifier : require
-#define PI 3.1415926
+#define PI 3.1415926535897932384626433832795
 
 layout(location = 0) in vec2 uvs;
 layout(location = 0) out vec4 fragColor;
