@@ -68,6 +68,7 @@ int main() {
     pbrPipeline->getPointLightBlock(0)->intensity = 100;
     CameraManager cameraManager(window);
     cameraManager.getCurrentCamera()->getPosition(pbrPipeline->getLightConfiguration()->cameraPosition);
+
     while (!window->needToClose()) {
         window->preRenderEvents();
         glm::mat4 camMatrix = cameraManager.getCurrentCamera()->calculateCameraMatrix( 75, 0.05f, 2600000, (float)window->getWidth()/(float)window->getHeight());
