@@ -7,7 +7,7 @@ layout(set = 0, binding = 0) uniform sampler2D hdrMap;
 
 void main(){
     vec3 pos = normalize(position);
-    float u = 1 - atan2(pos.z , pos.x) / (2 * PI);
-    float v = -atan2(pos.y, sqrt(pos.x * pos.x + pos.z * pos.z)) / PI + 0.5f;
-    return texture(hdrMap, vec2(u, v));
+    float u = 1 - atan(pos.z , pos.x) / (2 * PI);
+    float v = -atan(pos.y, sqrt(pos.x * pos.x + pos.z * pos.z)) / PI + 0.5f;
+    color = texture(hdrMap, vec2(u, v));
 }
