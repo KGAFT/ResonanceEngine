@@ -69,22 +69,28 @@ void DescriptorSetData::confirmAndWriteDataToDescriptorSet() const {
     DescriptorBufferInfo bufferInfo = {};
     DescriptorImageInfo imageInfo = {};
     for (uint32_t i = 0; i < instanceCount; i++) {
-        for (const auto &item: uniformBuffers[i]) {
-            bufferInfo = {
-                {{item.second->getBuffer(), 0, VK_WHOLE_SIZE}}, item.first, vk::DescriptorType::eUniformBuffer
-            };
-            descriptorSet->addBufferInfo(bufferInfo);
+        if(uniformBuffers.size()) {
+            for (const auto &item: uniformBuffers[i]) {
+                bufferInfo = {
+                    {{item.second->getBuffer(), 0, VK_WHOLE_SIZE}}, item.first, vk::DescriptorType::eUniformBuffer
+                };
+                descriptorSet->addBufferInfo(bufferInfo);
+            }
         }
-        for (const auto &item: samplers[i]) {
-            imageInfo = {
-                {{item.second->sampler->getSampler(), item.second->imageView, item.second->layout}}, item.first,
-                vk::DescriptorType::eCombinedImageSampler
-            };
-            descriptorSet->addImageInfo(imageInfo);
+        if(samplers.size()) {
+            for (const auto &item: samplers[i]) {
+                imageInfo = {
+                    {{item.second->sampler->getSampler(), item.second->imageView, item.second->layout}}, item.first,
+                    vk::DescriptorType::eCombinedImageSampler
+                };
+                descriptorSet->addImageInfo(imageInfo);
+            }
         }
-        for(const auto& item: storageBuffers[i]){
-            bufferInfo = {{{item.second->getBuffer(), 0, VK_WHOLE_SIZE}}, item.first, vk::DescriptorType::eStorageBuffer};
-            descriptorSet->addBufferInfo(bufferInfo);
+        if(storageBuffers.size()) {
+            for(const auto& item: storageBuffers[i]){
+                bufferInfo = {{{item.second->getBuffer(), 0, VK_WHOLE_SIZE}}, item.first, vk::DescriptorType::eStorageBuffer};
+                descriptorSet->addBufferInfo(bufferInfo);
+            }
         }
     }
     if (instanceCount > 1) {

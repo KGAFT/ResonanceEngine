@@ -42,68 +42,7 @@ static inline vk::ImageViewCreateInfo defaultColorViewCreateInfo = { vk::ImageVi
                                                                         vk::ImageAspectFlagBits::eColor, 0, 1,
                                                                         0, 1} };
 
-static inline float quadVerticesXPos[]
-{
-    0.5f, -0.5f, 0.5f,
-    0.5f, -0.5f, -0.5f,
-    0.5f, 0.5f, -0.5f,
-    0.5f, 0.5f, 0.5f
-};
-static inline uint32_t quadIndicesXPos[]
-{
-    3, 2, 1, 0, 3, 1
-};
 
-static inline float quadVerticesXNeg[]{
-    -0.5f, -0.5f, 0.5f,
-    -0.5f, -0.5f, -0.5f,
-    -0.5f, 0.5f, -0.5f,
-    -0.5f, 0.5f, 0.5f
-};
-static inline uint32_t quadIndicesXNeg[]{
-    0, 1, 2, 3, 0, 2
-};
-static inline float quadVerticesYPos[]{
-    -0.5f, 0.5f, 0.5f,
-    0.5f, 0.5f, -0.5f,
-    -0.5f, 0.5f, -0.5f,
-    0.5f, 0.5f, 0.5f
-};
-static inline uint32_t quadIndicesYPos[]{
-    3, 0, 2, 1, 3, 2
-};
-static inline float quadVerticesYNeg[]
-{
-    -0.5f, -0.5f, 0.5f,
-    0.5f, -0.5f, -0.5f,
-    -0.5f, -0.5f, -0.5f,
-    0.5f, -0.5f, 0.5f
-};
-static inline uint32_t quadIndicesYNeg[]
-{
-    3, 1, 2, 0, 3, 2
-};
-static inline float quadVerticesZPos[]
-{
-    -0.5f, 0.5f, 0.5f,
-    0.5f, 0.5f, 0.5f,
-    0.5f, -0.5f, 0.5f,
-    -0.5f, -0.5f, 0.5f
-};
-static inline uint32_t quadIndicesZPos[]
-{
-    0, 1, 2, 3, 0, 2
-};
-static inline float quadVerticesZNeg[]
-{
-    -0.5f, -0.5f, -0.5f,
-    0.5f, -0.5f, -0.5f,
-    -0.5f, 0.5f, -0.5f,
-    0.5f, 0.5f, -0.5f
-};
-static inline uint32_t quadIndicesZNeg[]{
-    1, 3, 2, 0, 1, 2
-};
 
 std::shared_ptr<Image> loadTexture(std::shared_ptr<LogicalDevice> device, std::string path) {
     try {
@@ -166,15 +105,26 @@ void testCube() {
     dscData.createSampler(VulkanContext::getDevice(), 0);
     PushConstant pcs(sizeof(TPCS), omnPip.getGraphicsPipeline()->getPipelineLayout());
 
-    auto texture = loadTexture(VulkanContext::getDevice(), "assets/textures/cubetest.hdr");
+    auto texture = loadTexture(VulkanContext::getDevice(), "assets/cubetest.hdr");
     dscData.getSamplerByBinding(0)->imageView = texture->getImageViews()[0]->getBase();
     dscData.confirmAndWriteDataToDescriptorSet();
+
+    auto quads = QuadMesh::getQuadMeshes(VulkanContext::getDevice());
+
     auto q = VulkanContext::getDevice()->getQueueByType(vk::QueueFlagBits::eGraphics);
-    auto cmd = q->beginSingleTimeCommands();
-    omnPip.begin(cmd, 0);
-    dscData.getDescriptorSet()->bindDescriptor(vk::PipelineBindPoint::eGraphics, 0, cmd, omnPip.getGraphicsPipeline()->getPipelineLayout());
-    omnPip.endRender(cmd, 0);
-    q->endSingleTimeCommands(cmd);
+
+    for (uint32_t i = 0; i < 6; i++) {
+        auto cmd = q->beginSingleTimeCommands();
+        omnPip.begin(cmd, i);
+        dscData.getDescriptorSet()->bindDescriptor(vk::PipelineBindPoint::eGraphics, 0, cmd, omnPip.getGraphicsPipeline()->getPipelineLayout());
+        (*quads)[i].second->bind(cmd);
+        (*quads)[i].first->bind(cmd);
+        (*quads)[i].first->drawAll(cmd);
+        omnPip.endRender(cmd, i);
+        q->endSingleTimeCommands(cmd);
+    }
+
+
 }
 
 int main() {
@@ -227,7 +177,8 @@ int main() {
     pbrPipeline->getPointLightBlock(0)->color = glm::vec3(1,0,0);
     pbrPipeline->getPointLightBlock(0)->intensity = 100;
     CameraManager cameraManager(window);
-    cameraManager.getCurrentCamera()->getPosition(pbrPipeline->getLightConfiguration()->cameraPosition);\
+    cameraManager.getCurrentCamera()->getPosition(pbrPipeline->getLightConfiguration()->cameraPosition);
+    testCube();
     while (!window->needToClose()) {
         window->preRenderEvents();
         glm::mat4 camMatrix = cameraManager.getCurrentCamera()->calculateCameraMatrix( 75, 0.05f, 2600000, (float)window->getWidth()/(float)window->getHeight());
